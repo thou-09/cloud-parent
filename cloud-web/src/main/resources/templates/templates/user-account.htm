@@ -1,0 +1,113 @@
+<ul class="nav">
+    <li class="active" id="userDetailBtn">基本信息</li>
+    <li id="userPwdBtn">修改密码</li>
+</ul>
+<div class="user-box">
+    <form id="userDetail" class="publishing" onsubmit="return false">
+        <label class="input-item input-item-block">
+            <span class="user-input-label">用户名</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入您的称呼">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">头像</span>
+            <div class="user-input">
+                <label class="user-img">
+                    <input type="file" id="user-img-change">
+                    <img src="./assets/img/detail/user.png" alt="" srcset="">
+                </label>
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">微信号</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入意向城市">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">QQ号</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入您的电话">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">手机号</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入您的电话">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">性别</span>
+            <div class="user-input">
+                <label class="user-sex">
+                    <input name="sex" type="radio">未知
+                </label>
+                <label class="user-sex">
+                    <input name="sex" type="radio">男
+                </label>
+                <label class="user-sex">
+                    <input name="sex" type="radio">女
+                </label>
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item-btn">
+            <input class="item-btn" type="button" value="确认修改">
+        </label>
+    </form>
+    <form id="userPwd" class="publishing" style="display: none;" onsubmit="return false">
+        <label class="input-item input-item-block">
+            <span class="user-input-label">旧密码</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入您的称呼">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">新密码</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入您的电话">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">确认密码</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入意向城市">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item-btn">
+            <input class="item-btn" type="button" value="确认修改">
+        </label>
+    </form>
+</div>
+<script>
+    $(function(){
+
+        $("#user-img-change").on("change",function(){
+            let imgFile = this.files[0];
+            console.log(imgFile);
+            $(this).next("img").prop("src",window.URL.createObjectURL(imgFile) );
+        })
+        $("#userDetailBtn").on("click",function(){
+            $(this).parent().find(".active").removeClass("active");
+            $(this).addClass("active");
+            $(".user-box form").hide();
+            $("#userDetail").show();
+        })
+        $("#userPwdBtn").on("click",function(){
+            $(this).parent().find(".active").removeClass("active");
+            $(this).addClass("active");
+            $(".user-box form").hide();
+            $("#userPwd").show();
+        })
+
+    })
+</script>

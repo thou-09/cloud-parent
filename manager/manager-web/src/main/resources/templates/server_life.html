@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>生活加盟商列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/js/_my.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                // 初始化生活加盟商列表
+                $('#commpanylist').datagrid({
+                    title: '生活加盟商列表',
+                    iconCls: 'icon-save',
+                    url: '/manager/serverCompanies/companylist?type=1',
+                    columns: [
+                        [
+                            {field: 'name', title: '服务商名称', width: 200, align: 'center'},
+                            {
+                                field: 'address',
+                                title: '公司地址',
+                                width: 200,
+                                align: 'center',
+                                formatter: function (val, row) {
+                                    return "<a href='/manager/commpanymap'  target='view_window'>" + val + "</a>";
+                                }
+                            },
+                            {field: 'linkman', title: '联系人', width: 100, align: 'center'},
+                            {field: 'phone', title: '公司电话', width: 100, align: 'center'},
+                            {field: 'zzhLength', title: '平台子账号', width: 100, align: 'center'},
+                            {
+                                field: 'member.level',
+                                title: '服务商等级',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.member != null ? row.member.level : '-';
+                                }
+                            },
+                            {field: 'joindate', title: '入驻时间', width: 100, align: 'center'},
+                            {
+                                field: 'flag', title: '状态', width: 100, align: 'center', formatter: (val, row) => {
+                                    return row.flag === 1 ? '<font color="green">启用</font>' : '<font color="red">禁用</font>';
+                                }
+                            },
+                            {
+                                field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
+                                    return "<a href='javascript:showDg();'>查看</a>";
+                                }
+                            }
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    pagination: true,
+                    pageList: [2, 4, 6, 8, 10],
+                    singleSelect: true
+                });
+
+                // 初始化子账号列表初始化
+                $('#subaccountlist').datagrid({
+                    columns: [
+                        [
+                            {field: 'name', title: '姓名', width: 100, align: 'center'},
+                            {field: 'phone', title: '电话', width: 100, align: 'center'},
+                            {field: 'wechat', title: '微信号', width: 100, align: 'center'},
+                            {field: 'qq', title: 'QQ', width: 100, align: 'center'},
+                            {field: 'flag', title: '状态', width: 100, align: 'center', formatter: (val, row) => {
+                                    return row.flag === 1 ? '<font color="green">启用</font>' : '<font color="red">禁用</font>';
+                                }},
+                            {
+                                field: 'cz', title: '操作', width: 100, align: 'center', formatter: function (val, row) {
+                                    return "<a href='javascript:release();'>解除关联</a>";
+                                }
+                            }
+                        ]
+                    ],
+                    pagination: true,
+                    pageList: [2, 4, 6, 8, 10],
+                    singleSelect: true,
+                });
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '服务商详情',
+                    width: 700,
+                    height: 700,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save'
+                });
+
+                $("#editdg").dialog({
+                    title: '服务商修改',
+                    width: 700,
+                    height: 700,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: modify
+                    }]
+                });
+
+                $("#subaccountdg").dialog({
+                    title: '子账户展示',
+                    width: 800,
+                    height: 600,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    onClose: () => {
+                        if (isReload === true) {
+                            $('#commpanylist').datagrid('reload');
+                        }
+                    }
+                });
+
+                // 初始化查询按钮
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
+                    .click(function () {
+                        $('#commpanylist').datagrid('load', {
+                            name: $('#tooldiv input[name=name]').val(),
+                            phone: $('#tooldiv input[name=phone]').val(),
+                            memberId: $('#tooldiv select[name=memberId]').val(),
+                            flag: $('#tooldiv select[name=flag]').val(),
+                        });
+                    });
+            });
+
+            // 查询弹出方法
+            function showDg() {
+                let id = $('#commpanylist').datagrid('getSelected').id;
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/serverCompanies/company/' + id,
+                    data : {},
+                    dataType : 'json',
+                    success : (data) => {
+                        // console.log(data)
+                        if (data.status === '00000') {
+                            let info = data.data;
+                            $('#dg-name').textbox('setValue', info.name);
+                            $('#dg-address').textbox('setValue', info.address);
+                            $('#dg-phone').textbox('setValue', info.phone);
+                            $('#dg-linkman').textbox('setValue', info.linkman);
+                            $('#dg-scale').textbox('setValue', info.scale);
+                            $('#dg-zzhLength').textbox('setValue', info.zzhLength);
+                            $('#dg-type').textbox('setValue',
+                                info.type === 1 ? '生活' : '商务');
+                            $('#dg-joindate').textbox('setValue', info.joindate);
+                            $('#dg-info').val(info.info);
+
+                            $('#dg-imgtab').empty();
+                            for (let annex of info.annexes) {
+                                $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px;'>");
+                            }
+
+                            $('#dg').dialog('open');
+                        } else {
+                            $.messager.alert('错误', data.message);
+                        }
+                    }
+                })
+            }
+
+            // 打开修改界面方法
+            function openeditdg() {
+                if ($('#commpanylist').datagrid('getSelected') == null) {
+                    $.messager.alert('错误', '请先选择一条记录');
+                    return;
+                }
+                let id = $('#commpanylist').datagrid('getSelected').id;
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/serverCompanies/company/' + id,
+                    data : {},
+                    dataType : 'json',
+                    success : (data) => {
+                        // console.log(data)
+                        if (data.status === '00000') {
+                            let info = data.data;
+                            $('#editdg-id').val(info.id);
+                            $('#editdg-name').textbox('setValue', info.name);
+                            $('#editdg-address').textbox('setValue', info.address);
+                            $('#editdg-phone').textbox('setValue', info.phone);
+                            $('#editdg-linkman').textbox('setValue', info.linkman);
+                            $('#editdg-scale').textbox('setValue', info.scale);
+                            $('#editdg-zzhLength').textbox('setValue', info.zzhLength);
+                            $('#editdg-type').textbox('setValue',
+                                info.type === 1 ? '生活' : '商务');
+                            $('#editdg-joindate').textbox('setValue', info.joindate);
+                            $('#editdg-gps').textbox('setValue', info.gps);
+                            $('#editdg-info').val(info.info);
+
+                            $('#editdg-imgbox').empty();
+                            $('#editdg-upload').val('');
+
+                            $('#editdg').dialog('open');
+                        } else {
+                            $.messager.alert('错误', data.message);
+                        }
+                    }
+                })
+            }
+
+            // 打开子账号展示界面方法
+            function opensubaccountdg() {
+                let row = $('#commpanylist').datagrid('getSelected');
+                if (row !== null) {
+                    $('#subaccountlist').datagrid({
+                        url: '/manager/users/userlist?companyid=' + row.id
+                    })
+                    $('#subaccountdg').dialog('open');
+                }
+            }
+
+            let isReload = false;
+
+            // 子账号解除绑定
+            function release() {
+                let row = $('#subaccountlist').datagrid('getSelected');
+                if (row !== null) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/users/modify',
+                        data : {
+                            id: row.id,
+                            companyid: -1,
+                        },
+                        dataType : 'json',
+                        success : (data) => {
+                            console.log(data)
+                            if (data.status === '00000') {
+                                isReload = true;
+                                $('#subaccountlist').datagrid('reload');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
+            }
+
+            // 启用禁用
+            function changeFlag(flag) {
+                let row = $('#commpanylist').datagrid('getSelected');
+                if (row !== null && flag !== row.flag) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/serverCompanies/modify/flag',
+                        data : {
+                            id: row.id,
+                            flag: flag
+                        },
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data)
+                            if (data.status === '00000') {
+                                $('#commpanylist').datagrid('reload');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
+            }
+
+            // 修改
+            function modify() {
+                let data = new FormData($('#edit-form')[0]);
+                data.append('mainfile', $('#editdg-upload-main')[0].files[0])
+                let files = $('#editdg-upload')[0].files;
+                for (let i = 0; i < files.length; i++) {
+                    data.append('files', files[i]);
+                }
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/serverCompanies/modify',
+                    contentType : false,
+                    processData: false,
+                    data : data,
+                    dataType : 'json',
+                    success : (data) => {
+                        console.log(data);
+                        if (data.status === '00000') {
+                            $("#editdg").dialog('close');
+                            $('#commpanylist').datagrid('reload');
+                        } else {
+                            $.messager.alert('错误', data.message);
+                        }
+                    }
+                })
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <input name="name" type="text" placeholder="请输入查询服务商名"/>
+            <input name="phone" type="text" placeholder="请输入查询服务商电话"/>
+            <select name="memberId">
+                <option value="">请选服务商等级</option>
+                <option value="1">VIP体验</option>
+                <option value="2">初级VIP</option>
+                <option value="3">中级VIP</option>
+                <option value="4">高级VIP</option>
+            </select>
+            <select name="flag">
+                <option value="">请选状态</option>
+                <option value="1">启用</option>
+                <option value="0">禁用</option>
+            </select>
+            <a id="submit_search">搜索</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="openeditdg()">修改</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="opensubaccountdg()">子账户维护</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" href="javascript:changeFlag(0)">禁用</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" href="javascript:changeFlag(1)">启用</a>
+        </div>
+        <table id="commpanylist"></table>
+        <!-- 服务商详情展示界面 -->
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <input id="dg-name" class="easyui-textbox" style="width:50%" data-options="label:'服务商名称:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-address" class="easyui-textbox" style="width:50%" data-options="label:'公司地址:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-phone" class="easyui-textbox" style="width:50%" data-options="label:'公司电话:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-linkman" class="easyui-textbox" style="width:50%;" data-options="label:'联系人:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-scale" class="easyui-textbox" style="width:50%;" data-options="label:'规模:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-zzhLength" class="easyui-textbox" style="width:50%;" data-options="label:'平台子账号:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-type" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-joindate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <textarea id="dg-info" cols="80" rows="5" readonly="true" style="border: 0px;">
+                        文本
+                    </textarea>
+                </div>
+                <div id="dg-imgtab" class="imgtab">
+                </div>
+            </div>
+        </div>
+        <!-- 服务商信息修改界面 -->
+        <div id="editdg">
+            <div align="center" style="margin-top: 30px">
+                <form id="edit-form">
+                    <input type="hidden" id="editdg-id" name="id">
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-name" name="name" class="easyui-textbox" style="width:50%" data-options="label:'服务商名称:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-address" name="address" class="easyui-textbox" style="width:50%" data-options="label:'公司地址:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-phone" name="phone" class="easyui-textbox" style="width:50%" data-options="label:'公司电话:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-linkman" name="linkman" class="easyui-textbox" style="width:50%;" data-options="label:'联系人:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-scale" name="scale" class="easyui-textbox" style="width:50%;" data-options="label:'规模:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-type" name="typeStr" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-joindate" name="joindate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-gps" name="gps" class="easyui-textbox" style="width:50%;" data-options="label:'GPS坐标:'" value=""/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <textarea name="info" id="editdg-info" cols="80" rows="5"></textarea>
+                    </div>
+                    <div>
+                        <div style="margin-bottom:20px; display: inline-block">
+                            营业执照:<input id="editdg-upload-main" type="file" accept="image/*"/>
+                        </div>
+                        <div style="margin-bottom:20px; display: inline-block">
+                            公司图片(多选):<input id="editdg-upload" type="file" accept="image/*" multiple="multiple"/>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <div id="editdg-imgbox-main" style="margin-bottom:20px; display: inline-block"></div>
+                    <div id="editdg-imgbox" style="margin-bottom:20px; display: inline-block"></div>
+                </div>
+            </div>
+        </div>
+        <!-- 子账号展示界面 -->
+        <div id="subaccountdg">
+            <table id="subaccountlist"></table>
+        </div>
+    </body>
+</html>
+<!-- 处理文件上传并预览 -->
+<script>
+    $('#editdg-upload-main').change((e) => {
+        $('#editdg-imgbox-main').empty();
+        let file = e.target.files[0];
+        let url = window.URL || window.webkitURL;
+        let imgurl = url.createObjectURL(file);
+        let html = `
+            <div style="display: inline-block">
+                <img style="width: 100px; height: 100px; " src="${imgurl}" alt="">
+            </div>
+        `;
+        $('#editdg-imgbox-main').append(html);
+    });
+
+    $('#editdg-upload').change((e) => {
+        $('#editdg-imgbox').empty();
+        let files = e.target.files;
+        if (files && files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                let url = window.URL || window.webkitURL;
+                let imgurl = url.createObjectURL(files[i]);
+                let html = `
+                    <div style="display: inline-block">
+                        <img style="width: 100px; height: 100px; " src="${imgurl}" alt="">
+                    </div>
+                `;
+                $('#editdg-imgbox').append(html);
+            }
+        }
+    })
+</script>

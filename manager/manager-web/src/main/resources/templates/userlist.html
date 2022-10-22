@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>前台用户列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#userlist').datagrid({
+                    title: '前台用户列表',
+                    iconCls: 'icon-save',
+                    url: '/manager/users/userlist',
+                    method: 'post',
+                    columns: [
+                        [
+                            {field: 'name', title: '姓名', width: 100, align: 'center'},
+                            {field: 'phone', title: '电话', width: 100, align: 'center'},
+                            {field: 'wechat', title: '微信号', width: 100, align: 'center'},
+                            {field: 'qq', title: 'QQ', width: 200, align: 'center'},
+                            {
+                                field: 'serverCommpanyDTO.name',
+                                title: '所属服务商',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.serverCommpanyDTO != null ? row.serverCommpanyDTO.name : '-';
+                                }
+                            },
+                            {
+                                field: 'serverCommpanyDTO.type',
+                                title: '服务商类型',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.serverCommpanyDTO != null ?
+                                        (row.serverCommpanyDTO.type === 1 ? '生活' : '商务') : '-';
+                                }
+                            },
+                            {
+                                field: 'flag', title: '状态', width: 100, align: 'center', formatter: (val, row) => {
+                                    return row.flag === 1 ? '<font color="green">启用</font>' : '<font color="red">禁用</font>';
+                                }
+                            },
+                            {
+                                field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
+                                    return "<a href='javascript:showDg();'>查看</a>";
+                                }
+                            }
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    pagination: true,
+                    pageNumber: 1,
+                    pageSize: 10,
+                    pageList: [2, 4, 6, 8, 10],
+                    singleSelect: true
+                });
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '用户详情',
+                    method: 'post',
+                    width: 700,
+                    height: 700,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                });
+
+                // 初始化查询按钮
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
+                    .click(function () {
+                        $('#userlist').datagrid('load', {
+                            name: $('#tooldiv input[name=name]').val(),
+                            phone: $('#tooldiv input[name=phone]').val(),
+                            wechat: $('#tooldiv input[name=wechat]').val(),
+                            qq: $('#tooldiv input[name=qq]').val(),
+                            companyType: $('#tooldiv select[name=companyType]').val()
+                        })
+                    });
+            });
+
+            // 查询弹出方法
+            function showDg() {
+                let id = $('#userlist').datagrid('getSelected').id;
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/users/user/' + id,
+                    data : {},
+                    dataType : 'json',
+                    success : (data) => {
+                        // console.log(data)
+                        if (data.status === '00000') {
+                            let info = data.data;
+                            // $('#dg-img').attr('src', info.heading);
+                            $('#dg-name').textbox('setValue', info.name);
+                            $('#dg-nickname').textbox('setValue', info.nickname);
+                            $('#dg-phone').textbox('setValue', info.phone);
+                            $('#dg-wechat').textbox('setValue', info.wechat);
+                            $('#dg-qq').textbox('setValue', info.qq);
+                            $('#dg-companyname').textbox('setValue',
+                                info.serverCommpanyDTO != null ? info.serverCommpanyDTO.name : '-');
+                            $('#dg-companytype').textbox('setValue',
+                                info.serverCommpanyDTO != null ? (info.serverCommpanyDTO.type === 1 ? '生活' : '商务') : '-');
+                            $('#dg-sex').textbox('setValue', info.sex === 1 ? '男' : '女');
+                            $('#dg-createdate').textbox('setValue', info.createdate);
+                            $('#dg-flag').textbox('setValue', info.flag === 1 ? '启用' : '禁用');
+
+                            $('#dg').dialog('open');
+                        } else {
+                            $.messager.alert('错误', data.message);
+                        }
+                    }
+                })
+            }
+
+            // 启用禁用
+            function changeFlag(flag) {
+                let row = $('#userlist').datagrid('getSelected');
+                if (row !== null && flag !== row.flag) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/users/modify/flag',
+                        data : {
+                            id: row.id,
+                            flag: flag
+                        },
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data)
+                            if (data.status === '00000') {
+                                $('#userlist').datagrid('reload');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <input name="name" type="text" placeholder="请输入查询用户名"/>
+            <input name="phone" type="text" placeholder="请输入查询电话"/>
+            <input name="wechat" type="text" placeholder="请输入查询微信"/>
+            <input name="qq" type="text" placeholder="请输入查询QQ"/>
+            <select name="companyType">
+                <option value="">请选用户类型</option>
+                <option value="-1">普通用户</option>
+                <option value="1">生活服务商</option>
+                <option value="2">商务服务商</option>
+            </select>
+            <a id="submit_search">搜索</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" href="javascript:changeFlag(0)">禁用</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" href="javascript:changeFlag(1)">启用</a>
+        </div>
+        <table id="userlist"></table>
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <img id="dg-img" src="./images/tx.jpg" alt="" style="width: 150px; height:150px;"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-name" class="easyui-textbox" style="width:50%" data-options="label:'姓名:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-nickname" class="easyui-textbox" style="width:50%" data-options="label:'昵称:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-phone" class="easyui-textbox" style="width:50%" data-options="label:'电话:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-wechat" class="easyui-textbox" style="width:50%;" data-options="label:'微信号:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-qq" class="easyui-textbox" style="width:50%;" data-options="label:'QQ:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-companyname" class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-companytype" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-sex" class="easyui-textbox" style="width:50%;" data-options="label:'性别:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-createdate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                           value=""/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input id="dg-flag" class="easyui-textbox" style="width:50%;" data-options="label:'状态:'" readonly="true"
+                           value=""/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

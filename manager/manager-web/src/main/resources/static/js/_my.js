@@ -1,0 +1,1 @@
+window.fileServer = "https://thou-bucket.oss-cn-nanjing.aliyuncs.com/"

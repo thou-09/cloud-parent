@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <script>
+
+    </script>
+</head>
+    <table border="1">
+        <tr>
+            <th>用户名</th>
+            <th>密码</th>
+            <th>状态</th>
+            <th>电话</th>
+        </tr>
+        <tr th:each="user,userStat: ${pageInfo.list}">
+            <td th:text="${user.username}"></td>
+            <td th:text="${user.password}"></td>
+            <td th:if="${user.status eq '1'}">启用</td>
+            <td th:if="${user.status eq '2'}">禁用</td>
+            <td th:text="${user.phone}"></td>
+        </tr>
+    </table>
+<body>
+<table id="tab"></table>
+</body>
+</html>

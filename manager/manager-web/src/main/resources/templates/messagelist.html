@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>前台留言列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#messagelist').datagrid({
+                    title: '前台留言列表',
+                    iconCls: 'icon-save',
+                    url: '/manager/messages/messagelist',
+                    columns: [
+                        [
+                            {field: 'name', title: '留言人称呼', width: 200, align: 'center'},
+                            {field: 'phone', title: '留言电话', width: 200, align: 'center'},
+                            {field: 'area', title: '意向范围', width: 200, align: 'center'},
+                            {
+                                field: 'serverCommpanyDTO.name',
+                                title: '留言服务商',
+                                width: 200,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.serverCommpanyDTO != null ? row.serverCommpanyDTO.name : '-';
+                                }
+                            },
+                            {field: 'createdate', title: '留言日期', width: 200, align: 'center'},
+                            {
+                                field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
+                                    return "<a href='javascript:showDg();'>查看留言</a>";
+                                }
+                            }
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    pagination: true,
+                    pageList: [2, 4, 6, 8, 10],
+                    singleSelect: true
+                });
+
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '留言详情',
+                    width: 500,
+                    height: 500,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save'
+                });
+
+                // 初始化查询按钮
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
+                    .click(function () {
+                        $('#messagelist').datagrid('load', {
+                            name: $('#tooldiv input[name=name]').val(),
+                            phone: $('#tooldiv input[name=phone]').val(),
+                        });
+                    });
+            });
+
+            // 查询弹出方法
+            function showDg() {
+                let msg = $('#messagelist').datagrid('getSelected').msg;
+                $('#dg-msg').text(msg);
+                $('#dg').dialog("open");
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <input name="name" type="text" placeholder="请输入查询用户名"/>
+            <input name="phone" type="text" placeholder="请输入查询电话"/>
+            <a id="submit_search">搜索</a>
+        </div>
+        <table id="messagelist"></table>
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div id="dg-msg" style="margin-bottom:20px">
+                    文本
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

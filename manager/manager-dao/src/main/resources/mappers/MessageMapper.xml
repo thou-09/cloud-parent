@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.MessageMapper">
+
+    <select id="listAllByParams" resultMap="dto_map">
+        select
+               tm.id tm_id,
+               tm.name tm_name,
+               tm.msg tm_msg,
+               tm.phone tm_phone,
+               tm.area tm_area,
+               tm.commpanyid tm_commpanyid,
+               tm.createdate tm_createdate,
+               tsc.id tsc_id,
+               tsc.name tsc_name,
+               tsc.info tsc_info,
+               tsc.address tsc_address,
+               tsc.gps tsc_gps,
+               tsc.scale tsc_scale,
+               tsc.createdate tsc_createdate,
+               tsc.joindate tsc_joindate,
+               tsc.flag tsc_flag,
+               tsc.type tsc_type,
+               tsc.linkman tsc_linkman,
+               tsc.phone tsc_phone
+        from t_message tm
+                left join t_server_commpany tsc on tsc.id = tm.commpanyid
+        <where>
+            <if test="null != name and '' != name">
+                and tm.name = #{name}
+            </if>
+            <if test="null != phone and '' != phone">
+                and tm.phone = #{phone}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="dto_map" type="messageDTO">
+        <id property="id" column="tm_id"/>
+        <result property="name" column="tm_name"/>
+        <result property="msg" column="tm_msg"/>
+        <result property="phone" column="tm_phone"/>
+        <result property="area" column="tm_area"/>
+        <result property="commpanyid" column="tm_commpanyid"/>
+        <result property="createdate" column="tm_createdate"/>
+        <association property="serverCommpanyDTO" javaType="serverCommpanyDTO">
+            <id property="id" column="tsc_id"/>
+            <result property="name" column="tsc_name"/>
+        </association>
+    </resultMap>
+</mapper>

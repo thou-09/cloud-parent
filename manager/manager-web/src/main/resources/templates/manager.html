@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>管理员列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            // 工具栏
+            let toolbar = [{
+                text: '新增',
+                iconCls: 'icon-add',
+                handler: function () {
+                    $('#dd').dialog('open');
+                }
+            }, '-', {
+                text: '修改',
+                iconCls: 'icon-edit',
+                handler: function () {
+                    $('#dd').dialog('open');
+                }
+            }];
+            $(function () {
+                $('#userlist').datagrid({
+                    title: '管理员列表',
+                    iconCls: 'icon-save',
+                    data: {
+                        "total": 50,
+                        "rows": [
+                            {id: 1, "username": "服务商人员1", "password": "123123123123123"},
+                            {id: 2, "username": "服务商人员2", "password": "123123123123123"},
+                            {id: 3, "username": "服务商人员3", "password": "123123123123123"},
+                            {id: 4, "username": "服务商人员4", "password": "123123123123123"},
+                            {id: 5, "username": "服务商人员5", "password": "123123123123123"},
+                            {id: 6, "username": "服务商人员6", "password": "123123123123123"}
+                        ]
+                    },
+                    columns: [
+                        [
+                            {field: 'id', title: '管理员ID', width: 100, align: 'center'},
+                            {field: 'username', title: '管理员名称', width: 100, align: 'center'},
+                            {field: 'password', title: '管理员密码', width: 100, align: 'center'},
+                            {field: 'roles', title: '拥有的角色', width: 200, align: 'center', formatter: format}
+                        ]
+                    ],
+                    pagination: true,
+                    toolbar: toolbar
+                });
+
+                // 初始化查询栏
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true}).click(function () {
+                });
+
+                // 初始化修改窗口
+                $('#dd').dialog({
+                    title: 'My Dialog',
+                    width: 700,
+                    height: 500,
+                    closed: true,
+                    cache: false,
+                    href: '',
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            alert('ok');
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            alert('cancel');
+                            ;
+                        }
+                    }]
+                });
+
+                // tree选项框初始化
+                $("#ah").tree({
+                    data: [{
+                        "id": 121,
+                        "text": "角色1"
+                    }, {
+                        "id": 122,
+                        "text": "角色2"
+                    }, {
+                        "id": 123,
+                        "text": "角色3"
+                    }, {
+                        "id": 123,
+                        "text": "角色4"
+                    }, {
+                        "id": 123,
+                        "text": "角色5"
+                    }
+                    ],
+                    method: 'post',
+                    animate: true,
+                    checkbox: true
+                });
+
+                // 初始化下拉控件
+                $("#commpanylist").combobox({
+                    data: [{
+                        id: 1,
+                        text: "月嫂排名家政"
+                    }, {
+                        id: 2,
+                        text: "康正金融公司"
+                    }, {
+                        id: 3,
+                        text: "信合贷款公司"
+                    }],
+                    width: 350,
+                    label: "服务商",
+                    valueField: 'id',
+                    textField: 'text'
+                });
+
+            });
+
+            // 列格式化方法
+            function format(val, row) {
+                return "<select name='search_type' style='width:100%'>"
+                    + "<option>角色1</option>"
+                    + "<option>角色2</option>"
+                    + "<option>角色3</option>"
+                    + "<option>角色4</option>"
+                    + "<option>角色5</option></select>";
+            }
+        </script>
+    </head>
+    <body>
+        <form name="searchform" method="post" action="" id="searchform">
+            <td width="70" height="30"><strong>管理员查询：</strong></td>
+            <td height="30">
+                <input type="text" name="keyword" size=20 placeholder="管理员名称"/>
+                <a id="submit_search">搜索</a>
+            </td>
+        </form>
+        <table id="userlist"></table>
+        <div id="dd">
+            <div align="center" style="margin-top: 30px">
+                <form id="ff" method="post">
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'管理员ID:'"
+                               readonly="readonly"/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" type="password" name="name" style="width:50%"
+                               data-options="label:'管理员密码:',required:true">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" name="name" style="width:50%"
+                               data-options="label:'管理员名称:',required:true">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <select id="commpanylist"></select>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <table style="width:48%">
+                            <td valign="top" style="width:50px">
+                                角色:
+                            </td>
+                            <td>
+                                <ul id="ah"></ul>
+                            </td>
+                        </table>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

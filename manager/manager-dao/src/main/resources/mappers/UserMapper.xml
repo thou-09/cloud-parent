@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.UserMapper">
+
+    <select id="listAllByParams" resultMap="dto_map">
+        select
+               tu.id tu_id,
+               tu.name tu_name,
+               tu.password tu_password,
+               tu.nickname tu_nickname,
+               tu.phone tu_phone,
+               tu.wechat tu_wechat,
+               tu.qq tu_qq,
+               tu.headimg tu_headimg,
+               tu.sex tu_sex,
+               tu.companyid tu_companyid,
+               tu.flag tu_flag,
+               tu.createdate tu_createdate,
+               tsc.id tsc_id,
+               tsc.name tsc_name,
+               tsc.info tsc_info,
+               tsc.address tsc_address,
+               tsc.gps tsc_gps,
+               tsc.scale tsc_scale,
+               tsc.createdate tsc_createdate,
+               tsc.joindate tsc_joindate,
+               tsc.flag tsc_flag,
+               tsc.type tsc_type,
+               tsc.linkman tsc_linkman,
+               tsc.phone tsc_phone
+        from t_user tu
+             left join t_server_commpany tsc on tu.companyid = tsc.id
+        <where>
+            <if test="null != companyid">
+                and tu.companyid = #{companyid}
+            </if>
+            <if test="null != name and '' != name">
+                and tu.name = #{name}
+            </if>
+            <if test="null != phone and '' != phone">
+                and tu.phone = #{phone}
+            </if>
+            <if test="null != wechat and '' != wechat">
+                and tu.wechat = #{wechat}
+            </if>
+            <if test="null != qq and '' != qq">
+                and tu.qq = #{qq}
+            </if>
+            <choose>
+                <when test="-1 == companyType">
+                    and tu.companyid is null
+                </when>
+                <when test="null != companyType">
+                    and tsc.type = #{companyType}
+                </when>
+            </choose>
+        </where>
+    </select>
+
+    <select id="getUserById" resultMap="dto_map">
+        select
+            tu.id tu_id,
+            tu.name tu_name,
+            tu.password tu_password,
+            tu.nickname tu_nickname,
+            tu.phone tu_phone,
+            tu.wechat tu_wechat,
+            tu.qq tu_qq,
+            tu.headimg tu_headimg,
+            tu.sex tu_sex,
+            tu.companyid tu_companyid,
+            tu.flag tu_flag,
+            tu.createdate tu_createdate,
+            tsc.id tsc_id,
+            tsc.name tsc_name,
+            tsc.info tsc_info,
+            tsc.address tsc_address,
+            tsc.gps tsc_gps,
+            tsc.scale tsc_scale,
+            tsc.createdate tsc_createdate,
+            tsc.joindate tsc_joindate,
+            tsc.flag tsc_flag,
+            tsc.type tsc_type,
+            tsc.linkman tsc_linkman,
+            tsc.phone tsc_phone
+        from t_user tu
+                 left join t_server_commpany tsc on tu.companyid = tsc.id
+        where tu.id = #{id}
+    </select>
+
+    <update id="updateUserById">
+        update t_user
+        <set>
+            <if test="null != flag">
+                flag = #{flag},
+            </if>
+            <if test="null != companyid and -1 == companyid">
+                companyid = null,
+            </if>
+        </set>
+        where id = #{id};
+    </update>
+
+    <resultMap id="dto_map" type="userDTO">
+        <id property="id" column="tu_id"/>
+        <result property="name" column="tu_name"/>
+        <result property="nickname" column="tu_nickname"/>
+        <result property="phone" column="tu_phone"/>
+        <result property="wechat" column="tu_wechat"/>
+        <result property="qq" column="tu_qq"/>
+        <result property="heading" column="tu_heading"/>
+        <result property="sex" column="tu_sex"/>
+        <result property="companyid" column="tu_companyid"/>
+        <result property="flag" column="tu_flag"/>
+        <result property="createdate" column="tu_createdate"/>
+        <association property="serverCommpanyDTO" javaType="serverCommpanyDTO">
+            <id property="id" column="tsc_id"/>
+            <result property="name" column="tsc_name"/>
+            <result property="type" column="tsc_type"/>
+            <result property="flag" column="tsc_flag"/>
+        </association>
+    </resultMap>
+</mapper>

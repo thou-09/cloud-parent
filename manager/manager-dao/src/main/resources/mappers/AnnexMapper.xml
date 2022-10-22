@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.AnnexMapper">
+
+    <insert id="insertAnnexes" parameterType="list">
+        insert into t_annex
+            (path, filename, type, keyid, tabletype)
+        values 
+        <foreach collection="annexes" item="annex" separator=",">
+            (#{annex.path}, #{annex.filename}, #{annex.type}, #{annex.keyid}, #{annex.tabletype})
+        </foreach>
+    </insert>
+    
+    <delete id="deleteAnnexByParams">
+        delete
+        from t_annex
+        where type = #{type} and tabletype = #{tabletype} and keyid = #{keyid}
+    </delete>
+</mapper>

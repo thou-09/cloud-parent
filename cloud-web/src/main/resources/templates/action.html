@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录</title>
+    <link rel="stylesheet" href="./assets/css/base.css">
+    <link rel="stylesheet" href="./assets/font/iconfont.css">
+</head>
+
+<body>
+    <header class="header-bar">
+        <nav class="bar-link">
+            <div class="city">城市：<span>南京</span></div>
+            <ul class="btns">
+                <li class="user-info">
+                    <span>张三</span>
+                    <a href="./back-manager.html">[ 个人中心 ]</a>
+                    <a href="#">[ 退出登录 ]</a>
+                </li>
+                <li><a href="./action.html#register">注册</a></li>
+                <li><a href="./action.html#login">登录</a></li>
+                <li><a href="./index.html">首页</a></li>
+                <li>
+                    商户推广
+                    <i class="iconfont icon-arrow-down"></i>
+                    <ul class="down-list-box">
+                        <!-- 通过锚点快速定位 -->
+                        <li><a href="./vip.html#level1">VIP-体验版</a></li>
+                        <li><a href="./vip.html#level2">VIP-初级版</a></li>
+                        <li><a href="./vip.html#level3">VIP-中级版</a></li>
+                        <li><a href="./vip.html#level4">VIP-高级版</a></li>
+                    </ul>
+                </li>
+                <li><a target="_black" href="https://www.itany.com">联系客服</a></li>
+                <li><a target="_black" href="https://www.itany.com">帮助</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main class="action-box">
+        <div class="title bg">
+            <img src="./assets/img/logo-c.png" alt="" srcset="">
+            <p>专业，优质，搞得定</p>
+        </div>
+        <section class="content">
+            <!-- tag="action-btn-event" 标签有事件绑定 -->
+            <div class="tab" tag="action-btn-event">
+                <span class="active" data-target="login">账号登录</span>
+                <span data-target="register">账号注册</span>
+            </div>
+            <div class="login active">
+                <!-- class="is-request-error" 用于显示该元素 -->
+                <div class="alert-error is-request-error">请求后数据响应错误提示</div>
+                <form action="#" method="post">
+                    <label>
+                        <!-- class="is-valid" 用户显示加载紧随的兄弟节点span,完成提示显示 -->
+                        <input class="is-valid" type="text" placeholder="手机号/用户名">
+                        <span>错误提示</span>
+                    </label>
+                    <label>
+                        <input type="password" placeholder="请输入密码">
+                        <span>错误提示</span>
+                    </label>
+                    <label class="code">
+                        <div>
+                            <input type="text" placeholder="验证码">
+                            <span>错误提示</span>
+                        </div>
+                        <img src="./assets/img/code.png" alt="">
+                    </label>
+                    <labe>
+                        <input type="button" value="立即登录">
+                        </label>
+                        <div class="rest-btn">
+                            <a href="./password.html">忘记密码</a>
+                        </div>
+                </form>
+            </div>
+            <div class="register">
+                <div class="alert-error">请求后数据响应错误提示</div>
+                <form action="#" method="post">
+                    <label>
+                        <input class="is-valid" type="text" placeholder="请输入用户名">
+                        <span>错误提示</span>
+                    </label>
+                    <label>
+                        <input class="is-valid" type="text" placeholder="请输入手机号码">
+                        <span>错误提示</span>
+                    </label>
+                    <label>
+                        <input class="is-valid" type="password" placeholder="请输入密码">
+                        <span>错误提示</span>
+                    </label>
+                    <label>
+                        <input class="is-valid" type="password" placeholder="请再次输入密码">
+                        <span>错误提示</span>
+                    </label>
+                    <label class="code">
+                        <div>
+                            <input class="is-valid" type="text" placeholder="验证码">
+                            <span>错误提示</span>
+                        </div>
+                        <img src="./assets/img/code.png" alt="">
+                    </label>
+                    <label>
+                        <input type="button" value="立即注册">
+                    </label>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer-bar">
+        <div class="main-box">
+            <img src="./assets/img/logo.png" alt="" srcset="">
+            <div>
+                <p>夫子庙校区：南京市秦淮区龙蟠中路458号通济产业园北区2栋1层</p>
+                <p>Copyright (C) 2002-2019 itany.com 南京市网博优壹职业培训学校 苏ICP备 苏ICP备1606</p>
+            </div>
+            <i class="record rec1"></i>
+            <i class="record rec2"></i>
+            <i class="record rec3"></i>
+            <i class="record rec4"></i>
+            <i class="record rec5"></i>
+        </div>
+    </footer>
+
+    <!-- 弹出插件 -->
+    <script src="./assets/plugins/coco-modal.js"></script>
+    <!-- 页面基础共享JS加载 -->
+    <script src="./assets/js/base.js"></script>
+    <!-- 当前页面独享JS加载 -->
+    <script src="./assets/js/pages/action.js"></script>
+</body>
+
+</html>

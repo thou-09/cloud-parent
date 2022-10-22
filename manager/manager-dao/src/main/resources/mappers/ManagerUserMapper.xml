@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.ManagerUserMapper">
+
+    <select id="getOneByUsernameAndPassword" resultType="managerUserDTO">
+        select id, username, password, commpanyid
+        from t_manager_user
+        <where>
+            <if test="null != username and '' != username">
+                and username = #{username}
+            </if>
+            <if test="null != password and '' != password">
+                and password = #{password}
+            </if>
+        </where>
+    </select>
+</mapper>

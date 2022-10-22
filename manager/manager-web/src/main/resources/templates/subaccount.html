@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>前台子账号列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#userlist').datagrid({
+                    title: '前台用户列表',
+                    iconCls: 'icon-save',
+                    data: {
+                        "total": 10,
+                        "rows": [
+                            {
+                                "name": "张三",
+                                "nickname": "服务商员工1",
+                                "phone": "1234567",
+                                "wechat": "1111111111",
+                                "qq": "22222222222",
+                                "sex": "女",
+                                "flag": "启用"
+                            },
+                            {
+                                "name": "李四",
+                                "nickname": "服务商员工1",
+                                "phone": "1234567",
+                                "wechat": "1111111111",
+                                "qq": "22222222222",
+                                "sex": "女",
+                                "flag": "启用"
+                            },
+                            {
+                                "name": "王五",
+                                "nickname": "服务商员工1",
+                                "phone": "1234567",
+                                "wechat": "1111111111",
+                                "qq": "22222222222",
+                                "sex": "女",
+                                "flag": "启用"
+                            },
+                            {
+                                "name": "赵六",
+                                "nickname": "服务商员工1",
+                                "phone": "1234567",
+                                "wechat": "1111111111",
+                                "qq": "22222222222",
+                                "sex": "男",
+                                "flag": "启用"
+                            },
+                            {
+                                "name": "王七",
+                                "nickname": "服务商员工1",
+                                "phone": "1234567",
+                                "wechat": "1111111111",
+                                "qq": "22222222222",
+                                "sex": "男",
+                                "flag": "启用"
+                            },
+                            {
+                                "name": "刘八",
+                                "nickname": "普通用户",
+                                "phone": "1234567",
+                                "wechat": "1111111111",
+                                "qq": "22222222222",
+                                "sex": "男",
+                                "flag": "启用"
+                            }
+                        ]
+                    },
+                    columns: [
+                        [
+                            {field: 'name', title: '姓名', width: 100, align: 'center'},
+                            {field: 'phone', title: '电话', width: 100, align: 'center'},
+                            {field: 'wechat', title: '微信号', width: 100, align: 'center'},
+                            {field: 'qq', title: 'QQ', width: 200, align: 'center'},
+                            {field: 'flag', title: '状态', width: 100, align: 'center'},
+                            {
+                                field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
+                                    return "<a href='javascript:showDg();'>查看</a>";
+                                }
+                            }
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    pagination: true,
+                    singleSelect: true
+                });
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '用户详情',
+                    width: 700,
+                    height: 700,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save'
+                });
+
+                // 初始化绑定界面
+                $("#addsub").dialog({
+                    title: '子账号绑定',
+                    width: 300,
+                    height: 200,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            alert('ok');
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            alert('cancel');
+                        }
+                    }]
+                });
+
+                // 初始化查询按钮
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
+                    .click(function () {
+                        alert("开始查询");
+                    });
+            });
+
+            // 查询弹出方法
+            function showDg() {
+                $('#dg').dialog("open");
+            }
+
+            // 打开绑定子账号界面
+            function openaddsub() {
+                $('#addsub').dialog("open");
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <input type="text" placeholder="请输入查询用户名"/>
+            <input type="text" placeholder="请输入查询电话"/>
+            <input type="text" placeholder="请输入查询微信"/>
+            <input type="text" placeholder="请输入查询QQ"/>
+            <a id="submit_search">搜索</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'">解除关联</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="openaddsub();">绑定子账号</a>
+        </div>
+        <table id="userlist"></table>
+        <!-- 关联子账号详情界面 -->
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <img src="./images/tx.jpg" alt="" style="width: 150px; height:150px;"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'姓名:'" readonly="true"
+                           value="张三"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'昵称:'" readonly="true"
+                           value="服务商员工1"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'电话:'" readonly="true"
+                           value="123456"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'微信号:'" readonly="true"
+                           value="11111111111"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'QQ:'" readonly="true"
+                           value="2222222222"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'性别:'" readonly="true"
+                           value="男"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                           value="2021-1-1"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'状态:'" readonly="true"
+                           value="启用"/>
+                </div>
+            </div>
+        </div>
+        <!-- 子账号添加界面 -->
+        <div id="addsub">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:80%" data-options="label:'绑定手机:'"/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

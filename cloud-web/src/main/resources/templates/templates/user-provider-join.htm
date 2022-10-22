@@ -1,0 +1,200 @@
+<ul class="nav">
+    <li class="active">加盟服务商</li>
+</ul>
+<div class="provider-join-box">
+    <form class="publishing" onsubmit="return false">
+        <label class="input-item input-item-block">
+            <span class="user-input-label">公司名称</span>
+            <div class="user-input is-valid">
+                <input type="text" placeholder="请输入公司名称">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">联系人</span>
+            <div class="user-input is-valid">
+                <input type="text" placeholder="请输入联系人">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">公司电话</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入公司电话">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">服务类型</span>
+            <div class="user-input provider-select">
+                <select>
+                    <option value="-1">请选择服务类型</option>
+                    <option value="1">本地生活服务</option>
+                    <option value="">本地商务服务</option>
+                </select>
+                <span class="error">错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">公司规模</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入公司规模">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">公司GPS</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入公司GPS">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-block">
+            <span class="user-input-label">公司地址</span>
+            <div class="user-input">
+                <input type="text" placeholder="请输入公司地址">
+                <span>错误提示</span>
+            </div>
+        </label>
+        <label class="input-item input-item-textarea">
+            <div class="lable-block">
+                <span class="user-input-label">公司简介</span>
+            </div>
+            <div class="user-input is-valid">
+                <textarea cols="30" rows="10" placeholder="请输入公司简介"></textarea>
+                <span>错误提示</span>
+            </div>
+        </label>
+        <div class="input-item input-item-textarea">
+            <div class="lable-block">
+                <span class="user-input-label">营业执照</span>
+            </div>
+            <div class="user-input">
+                <div class="user-input-img">
+                    <label class="img-input" id="businessFileInput">
+                        <input type="file">
+                    </label>
+                </div>
+                <span>错误提示</span>
+            </div>
+        </div>
+        <div class="input-item input-item-textarea">
+            <div class="lable-block">
+                <span class="user-input-label">公司图片</span>
+            </div>
+            <div class="user-input">
+                <div class="user-input-img">
+                    <label class="img-input" id="companyFileInput">
+                        <input type="file">
+                    </label>
+                </div>
+                <span>错误提示</span>
+            </div>
+        </div>
+        <label class="input-item-btn">
+            <input class="item-btn" type="button" value="提交申请">
+        </label>
+    </form>
+</div>
+<script>
+    $(function () {
+        const initChooseFileFunction = function (fileBtnDom,callback = function () { }) {
+            if (!(fileBtnDom instanceof Element)) {
+                console.error("方法initChooseFileFunction接收的参数：'", fileBtnDom, "'不是一个有效的DOM");
+                return;
+            }
+            let inputFileDom = fileBtnDom.querySelector("input[type=file]")
+            inputFileDom.addEventListener("change", function () {
+                let file = this.files[0]
+                let spanDom = document.createElement("span");
+                spanDom.classList.add("img-choose-list");
+
+                let imgChoose = document.createElement("img");
+                imgChoose.classList.add("img-choose");
+                imgChoose.src = window.URL.createObjectURL(file);
+
+                let imgLoading = document.createElement("img");
+                imgLoading.classList.add("img-loading");
+                imgLoading.src = "./assets/img/loading2.gif";
+
+                let imgClose = document.createElement("img");
+                imgClose.classList.add("img-close");
+                imgClose.src = "./assets/img/close.png";
+
+                spanDom.appendChild(imgChoose);
+                spanDom.appendChild(imgLoading);
+                spanDom.appendChild(imgClose);
+
+                fileBtnDom.parentElement.insertBefore(spanDom, fileBtnDom);
+
+                callback(file, function (closeFunction) {
+                    inputFileDom.value = "";
+                    spanDom.removeChild(imgLoading);
+                    imgClose.addEventListener("click", function () {
+                        fileBtnDom.parentElement.removeChild(spanDom);
+                        closeFunction();
+                    })
+                }, function () {
+                    inputFileDom.value = "";
+                    fileBtnDom.parentElement.removeChild(spanDom);
+                })
+            })
+        }
+
+        let businessFileInput = $("#businessFileInput")[0];
+
+        // 自行定义文件路径存储集合 - 用于后续服务信息添加
+        let businessPath = [];
+
+        initChooseFileFunction(businessFileInput,function(file,done,fail){
+            console.log(file); // 需要上传的文件信息
+
+            // 模拟ajax文件上传处理
+            setTimeout(()=>{
+                let num = Math.random(); // 通过随机值模拟上传成功还是上传失败
+                if(num>0.4){
+                    // 上传成功
+                    let path = Math.random(); // 模拟请求返回的上传成功后的文件路径数据
+                    let i = businessPath.push(path)-1  // push方法会返回数据存储后数组的长度，-1 即为当前元素的下标
+                    // 执行success方法固定页面展示效果
+                    done(function(){
+                        // 该方法用于绑定删除按钮事件
+                        // 如果上传成功的图片被点击了删除按钮，通过该回调可以在 filesPath 数组中删除对应路径
+                        businessPath.splice(i,1);
+                    });
+                }else{
+                    // 上传失败;
+                    fail(); // 执行fail方法移除页面展示效果
+                }
+            },2000)
+        })
+
+        let companyFileInput = $("#companyFileInput")[0];
+
+        // 自行定义文件路径存储集合 - 用于后续服务信息添加
+        let companyPath = [];
+
+        initChooseFileFunction(companyFileInput,function(file,done,fail){
+            console.log(file); // 需要上传的文件信息
+
+            // 模拟ajax文件上传处理
+            setTimeout(()=>{
+                let num = Math.random(); // 通过随机值模拟上传成功还是上传失败
+                if(num>0.4){
+                    // 上传成功
+                    let path = Math.random(); // 模拟请求返回的上传成功后的文件路径数据
+                    let i = companyPath.push(path)-1  // push方法会返回数据存储后数组的长度，-1 即为当前元素的下标
+                    // 执行success方法固定页面展示效果
+                    done(function(){
+                        // 该方法用于绑定删除按钮事件
+                        // 如果上传成功的图片被点击了删除按钮，通过该回调可以在 filesPath 数组中删除对应路径
+                        companyPath.splice(i,1);
+                    });
+                }else{
+                    // 上传失败;
+                    fail(); // 执行fail方法移除页面展示效果
+                }
+            },2000)
+        })
+    })
+</script>

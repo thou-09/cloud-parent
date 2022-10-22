@@ -1,0 +1,6 @@
+**/main/java/com/itany/constants/AliyunOssConsts.java
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/

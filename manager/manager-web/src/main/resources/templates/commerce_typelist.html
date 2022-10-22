@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>商务服务类型列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#typelist').datagrid({
+                    title: '商务服务类型列表',
+                    iconCls: 'icon-save',
+                    data: {
+                        "total": 10,
+                        "rows": [
+                            {"id": 1, "name": "投资理财", "parentid": "顶级类型"},
+                            {"id": 1, "name": "公司注册", "parentid": "顶级类型"},
+                            {"id": 1, "name": "货运物流", "parentid": "顶级类型"},
+                        ]
+                    },
+                    columns: [
+                        [
+                            {field: 'id', title: '主键', width: 100, align: 'center'},
+                            {field: 'name', title: '类型名称', width: 100, align: 'center'},
+                            {field: 'parentid', title: '父类型名称', width: 100, align: 'center'}
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    singleSelect: true
+                });
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '类型修改',
+                    width: 300,
+                    height: 200,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            alert('ok');
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            alert('cancel');
+                        }
+                    }]
+                });
+
+
+            });
+
+            function opendg() {
+                $('#dg').dialog("open");
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'">删除</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="opendg();">添加</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="opendg();">修改</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'">下一级</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'">上一级</a>
+        </div>
+        <table id="typelist"></table>
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:80%" data-options="label:'类型名称:'"/>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.ServerCommpanyMapper">
+
+    <select id="listAllByParams" resultMap="dto_map">
+        select
+               tsc.id tsc_id,
+               tsc.name tsc_name,
+               tsc.info tsc_info,
+               tsc.address tsc_address,
+               tsc.gps tsc_gps,
+               tsc.scale tsc_scale,
+               tsc.createdate tsc_createdate,
+               tsc.joindate tsc_joindate,
+               tsc.flag tsc_flag,
+               tsc.type tsc_type,
+               tsc.linkman tsc_linkman,
+               tsc.phone tsc_phone,
+               tm.id tm_id,
+               tm.level tm_level,
+               tm.price tm_price,
+               tm.day tm_day,
+               (select count(0)
+                   from t_user
+                   where companyid = tsc.id) as tsc_zzhLength
+        from t_server_commpany tsc
+                 left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                 left join t_member tm on tmc.memberid = tm.id
+        <where>
+            and (tmc.startdate is null or now() &gt;= tmc.startdate) and (tmc.enddate is null or now() &lt;= tmc.enddate)
+            <if test="null != name and '' != name">
+                and tsc.name = #{name}
+            </if>
+            <if test="null != phone and '' != phone">
+                and tsc.phone = #{phone}
+            </if>
+            <if test="null != memberId">
+                and tm.id = #{memberId}
+            </if>
+            <if test="null != flag">
+                and tsc.flag = #{flag}
+            </if>
+            <if test="null != type">
+                and tsc.type  = #{type}
+            </if>
+        </where>
+    </select>
+
+    <select id="getServerCommpanyById" resultMap="dto_map_2">
+        select
+                tsc.id tsc_id,
+                tsc.name tsc_name,
+                tsc.info tsc_info,
+                tsc.address tsc_address,
+                tsc.gps tsc_gps,
+                tsc.scale tsc_scale,
+                tsc.createdate tsc_createdate,
+                tsc.joindate tsc_joindate,
+                tsc.flag tsc_flag,
+                tsc.type tsc_type,
+                tsc.linkman tsc_linkman,
+                tsc.phone tsc_phone,
+                tm.id tm_id,
+                tm.level tm_level,
+                tm.price tm_price,
+                tm.day tm_day,
+                ta.id ta_id,
+                ta.path ta_path,
+                ta.filename ta_filename,
+                ta.type ta_type,
+                (select count(0)
+                    from t_user
+                    where companyid = tsc.id) as tsc_zzhLength
+        from t_server_commpany tsc
+                left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                left join t_member tm on tm.id = tmc.memberid
+                left join t_annex ta on tsc.id = ta.keyid
+        where
+              (ta.tabletype is null or ta.tabletype = 2)
+          and tsc.id = #{id}
+          and (tmc.startdate is null or now() &gt;= tmc.startdate) and (tmc.enddate is null or now() &lt;= tmc.enddate)
+    </select>
+
+    <update id="updateServerCommpanyById">
+        update t_server_commpany
+        <set>
+            <if test="null != flag">
+                flag = #{flag},
+            </if>
+            <if test="null != name and '' != name">
+                name = #{name},
+            </if>
+            <if test="null != address and '' != address">
+                address = #{address},
+            </if>
+            <if test="null != gps and '' != gps">
+                gps = #{gps},
+            </if>
+            <if test="null != scale and '' != scale">
+                scale = #{scale},
+            </if>
+            <if test="null != joindate">
+                joindate = #{joindate},
+            </if>
+            <if test="null != linkman and '' != linkman">
+                linkman = #{linkman},
+            </if>
+            <if test="null != phone and '' != phone">
+                phone = #{phone},
+            </if>
+            <if test="null != type">
+                type = #{type},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <resultMap id="dto_map" type="serverCommpanyDTO">
+        <id property="id" column="tsc_id"/>
+        <result property="flag" column="tsc_flag"/>
+        <result property="name" column="tsc_name"/>
+        <result property="address" column="tsc_address"/>
+        <result property="linkman" column="tsc_linkman"/>
+        <result property="joindate" column="tsc_joindate"/>
+        <result property="phone" column="tsc_phone"/>
+        <result property="type" column="tsc_type"/>
+        <result property="zzhLength" column="tsc_zzhLength"/>
+        <association property="member" javaType="member">
+            <id property="id" column="tm_member"/>
+            <result property="level" column="tm_level"/>
+            <result property="day" column="tm_day"/>
+            <result property="price" column="tm_price"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="dto_map_2" type="serverCommpanyDTO">
+        <id property="id" column="tsc_id"/>
+        <result property="flag" column="tsc_flag"/>
+        <result property="info" column="tsc_info"/>
+        <result property="name" column="tsc_name"/>
+        <result property="address" column="tsc_address"/>
+        <result property="linkman" column="tsc_linkman"/>
+        <result property="joindate" column="tsc_joindate"/>
+        <result property="phone" column="tsc_phone"/>
+        <result property="gps" column="tsc_gps"/>
+        <result property="type" column="tsc_type"/>
+        <result property="scale" column="tsc_scale"/>
+        <result property="zzhLength" column="tsc_zzhLength"/>
+        <association property="member" javaType="member">
+            <id property="id" column="tm_member"/>
+            <result property="level" column="tm_level"/>
+            <result property="day" column="tm_day"/>
+            <result property="price" column="tm_price"/>
+        </association>
+        <collection property="annexes" ofType="annex">
+            <id property="id" column="ta_id"/>
+            <result property="path" column="ta_path"/>
+            <result property="filename" column="ta_filename"/>
+            <result property="type" column="ta_type"/>
+        </collection>
+    </resultMap>
+</mapper>

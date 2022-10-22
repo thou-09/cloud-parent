@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <title>登陆</title>
+        <link rel="stylesheet" th:href="@{/manager/css/login.css}">
+        <script th:src="@{/manager/js/jquery-1.4.2.min.js}"></script>
+        <!-- 背景图片自动更换 -->
+        <script th:src="@{/manager/js/supersized.3.2.7.min.js}"></script>
+        <script th:src="@{/manager/js/login-page/login-supersized-init.js}"></script>
+    </head>
+    <body>
+        <div class="login-container">
+            <h1>ITANY 生活服务</h1>
+            <div class="connect">
+                <p>后台维护管理系统</p>
+            </div>
+            <form id="loginForm">
+                <div>
+                    <span style="color: red" id="msg"></span>
+                </div>
+                <div>
+                    <input type="text" name="username" class="username" placeholder="用户名" autocomplete="off"/>
+                </div>
+                <div>
+                    <input type="password" name="password" class="password" placeholder="密码"
+                           oncontextmenu="return false" onpaste="return false"/>
+                </div>
+                <button id="submit" type="submit">登 陆</button>
+            </form>
+        </div>
+    </body>
+</html>
+<script>
+    // 登录
+    $('#loginForm').submit((e) => {
+        e.preventDefault();
+        $.ajax({
+            type : 'post',
+            url : '/manager/managerUsers/login',
+            data : $('#loginForm').serialize(),
+            dataType : 'json',
+            success : (data) => {
+                console.log(data);
+                if (data.status === '00000') {
+                    location.href = '/manager/index';
+                } else {
+                    $('#msg').html(data.message);
+                }
+            }
+        })
+    })
+</script>

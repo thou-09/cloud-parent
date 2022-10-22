@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>权限列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#userlist').datagrid({
+                    title: '权限列表',
+                    iconCls: 'icon-save',
+                    data: {
+                        "total": 10,
+                        "rows": [
+                            {"id": 1, "name": "用户管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
+                            {"id": 2, "name": "加盟商管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
+                            {"id": 3, "name": "服务管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
+                            {"id": 4, "name": "数据管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
+                            {"id": 5, "name": "权限管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"}
+                        ]
+                    },
+                    columns: [
+                        [
+                            {field: 'id', title: '权限ID', width: 100, align: 'center'},
+                            {field: 'name', title: '权限名称', width: 100, align: 'center'},
+                            {field: 'url', title: '权限URL', width: 200, align: 'center'},
+                            {field: 'parentid', title: '权限所在模块', width: 80, align: 'center'}
+                        ]
+                    ],
+                    pagination: true,
+                    toolbar: "#tooldiv"
+                });
+
+                // 初始化查询栏
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true}).click(function () {
+                });
+
+                // 初始化修改窗口
+                $('#dd').dialog({
+                    title: 'My Dialog',
+                    width: 700,
+                    height: 500,
+                    closed: true,
+                    cache: false,
+                    href: '',
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            alert('ok');
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            alert('cancel');
+                        }
+                    }]
+                });
+
+            });
+
+            function openedit() {
+                $('#dd').dialog('open');
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <input type="text" placeholder="请输入查询权限名称"/>
+            <input type="text" placeholder="请输入查询模块名称"/>
+            <a id="submit_search">搜索</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="openedit();">修改</a>
+        </div>
+        <table id="userlist"></table>
+        <div id="dd">
+            <div align="center" style="margin-top: 30px">
+                <form id="ff" method="post">
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'权限ID:'"
+                               readonly="readonly"/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'权限url:'"
+                               readonly="readonly"/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input class="easyui-textbox" name="name" style="width:50%"
+                               data-options="label:'权限名称:',required:true">
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <select class="easyui-combobox" name="language" label="所属模块:" style="width:50%"
+                                data-options="multiple:false">
+                            <option value="-1">请选择模块</option>
+                            <option value="be_name">用户管理</option>
+                            <option value="be_intro">权限管理</option>
+                            <option value="be_intro">数据管理</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

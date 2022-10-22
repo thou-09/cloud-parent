@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>加盟商审核列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#examinelist').datagrid({
+                    title: '加盟商审核列表',
+                    iconCls: 'icon-save',
+                    data: {
+                        "total": 10,
+                        "rows": [
+                            {
+                                "title": "月嫂排名服务公司加盟审核", "name": "月嫂排名服务公司", "typeid": "生活", "createdate": "2022-1-1"
+                                , "flag": "待审核", "address": "南京市鼓楼区xxxxxx", "userid": "张三"
+                            },
+                            {
+                                "title": "月嫂排名服务公司加盟审核", "name": "月嫂排名服务公司", "typeid": "生活", "createdate": "2022-1-1"
+                                , "flag": "待审核", "address": "南京市鼓楼区xxxxxx", "userid": "张三"
+                            },
+                            {
+                                "title": "月嫂排名服务公司加盟审核", "name": "月嫂排名服务公司", "typeid": "生活", "createdate": "2022-1-1"
+                                , "flag": "待审核", "address": "南京市鼓楼区xxxxxx", "userid": "张三"
+                            },
+                            {
+                                "title": "月嫂排名服务公司加盟审核", "name": "月嫂排名服务公司", "typeid": "生活", "createdate": "2022-1-1"
+                                , "flag": "待审核", "address": "南京市鼓楼区xxxxxx", "userid": "张三"
+                            },
+                            {
+                                "title": "安康贷款公司加盟审核", "name": "安康贷款公司", "typeid": "商务", "createdate": "2022-1-1"
+                                , "flag": "通过", "address": "南京市鼓楼区xxxxxx", "userid": "张三"
+                            },
+                            {
+                                "title": "月嫂排名服务公司加盟审核", "name": "月嫂排名服务公司", "typeid": "生活", "createdate": "2022-1-1"
+                                , "flag": "待审核", "address": "南京市鼓楼区xxxxxx", "userid": "张三"
+                            }
+
+                        ]
+                    },
+                    columns: [
+                        [
+                            {field: 'title', title: '审核标题', width: 200, align: 'center'},
+                            {field: 'name', title: '加盟商名称', width: 200, align: 'center'},
+                            {
+                                field: 'address',
+                                title: '加盟商地址',
+                                width: 200,
+                                align: 'center',
+                                formatter: function (val, row) {
+                                    return "<a href='commpanymap.html'  target='view_window'>" + val + "</a>";
+                                }
+                            },
+                            {field: 'typeid', title: '服务类型', width: 100, align: 'center'},
+                            {field: 'createdate', title: '提交日期', width: 100, align: 'center'},
+                            {field: 'userid', title: '申请账户名', width: 100, align: 'center'},
+                            {field: 'flag', title: '状态', width: 100, align: 'center'},
+                            {
+                                field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
+                                    return "<a href='javascript:showDg();'>查看加盟商详情</a>";
+                                }
+                            }
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    pagination: true,
+                    singleSelect: true
+                });
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '加盟商详情',
+                    width: 700,
+                    height: 700,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save'
+                });
+
+                $("#examinedg").dialog({
+                    title: '审核操作',
+                    width: 500,
+                    height: 300,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            alert('ok');
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            alert('cancel');
+                        }
+                    }]
+                });
+
+                // 初始化查询按钮
+                $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
+                    .click(function () {
+                        alert("开始查询");
+                    });
+
+            });
+
+            // 查询弹出方法
+            function showDg() {
+                $('#dg').dialog("open");
+            }
+
+            // 打开审核操作界面方法
+            function openexaminedg() {
+                $("#examinedg").dialog("open");
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <input type="text" placeholder="请输入查询加盟商"/>
+            <select>
+                <option value="">请选状态</option>
+                <option value="">待审核</option>
+                <option value="">已通过</option>
+                <option value="">未通过</option>
+            </select>
+            <a id="submit_search">搜索</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="openexaminedg();">审核</a>
+        </div>
+        <table id="examinelist"></table>
+        <!-- 审核详情界面 -->
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'服务商名称:'" readonly="true"
+                           value="安普惠融资担保有限公司"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'公司地址:'" readonly="true"
+                           value="南京市鼓楼区xxxxxx"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'公司电话:'" readonly="true"
+                           value="123456123"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'联系人:'" readonly="true"
+                           value="谢老板"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'规模:'" readonly="true"
+                           value="100人以上"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                           value="2021-1-1"/>
+                </div>
+                <div style="margin-bottom:20px">
+                <textarea cols="80" rows="5" readonly="true" style="border: 0px;">
+ 百姓网成立于2005年3月，是国内领先的分类信息生态服务商，是中国互联网轻资产模式的典范百姓网致力于创造以分类信息业务为平台、多条垂直业务线布局的生态圈为用户提供涵生活服务、招聘求职、房屋租售、二手车买卖、二手交易、教育培训、同城交友等一站式本地生活服务信息平台，同时为中小微商户建立全方位的精准营销解决方案。
+                </textarea>
+                </div>
+                <div class="imgtab">
+                    <img src="./images/tx.jpg" alt="" style="width: 100px;height: 100px;">
+                    <img src="./images/tx.jpg" alt="" style="width: 100px;height: 100px;">
+                    <img src="./images/tx.jpg" alt="" style="width: 100px;height: 100px;">
+                    <img src="./images/tx.jpg" alt="" style="width: 100px;height: 100px;">
+                    <img src="./images/tx.jpg" alt="" style="width: 100px;height: 100px;">
+
+                </div>
+            </div>
+        </div>
+        <!-- 审核操作界面 -->
+        <div id="examinedg">
+            <div align="center" style="margin-top: 30px">
+                <form id="ff" method="post">
+                    <table>
+                        <tr>
+                            <td>
+                                审核状态:
+                            </td>
+                            <td>
+                                <select name="search_type" id="search_type" style="width:100px">
+                                    <option value="be_intro">通过</option>
+                                    <option value="be_intro">不通过</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr style="vertical-align:top">
+                            <td>
+                                审核备注:
+                            </td>
+                            <td>
+                                <textarea rows="10" cols="30"></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

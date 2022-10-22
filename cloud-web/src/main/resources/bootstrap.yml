@@ -1,0 +1,48 @@
+server:
+  port: 9001
+
+mybatis:
+  type-aliases-package: com.itany.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations:
+    - classpath:mappers/*.xml
+
+spring:
+  application:
+    name: cloud-web
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force:   true
+    thymeleaf:
+      cache: false
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 8000
+        readTimeout: 8000
+  hystrix:
+    enabled: false
+    command:
+      default:
+        execution:
+          isolation:
+            thread:
+              timeoutInMilliseconds: 5000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

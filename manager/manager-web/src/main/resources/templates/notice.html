@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
+    <head>
+        <meta charset="UTF-8">
+        <title>站内信列表</title>
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/default/easyui.css}">
+        <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('#noticelist').datagrid({
+                    title: '站内信列表',
+                    iconCls: 'icon-save',
+                    data: {
+                        "total": 10,
+                        "rows": [
+                            {
+                                "title": "月嫂排名公司审核情况",
+                                "info": "恭喜审核通过",
+                                "manageruserid": "平台人员1",
+                                "userid": "张三",
+                                "createdate": "2022-1-1"
+                            },
+                            {
+                                "title": "月嫂排名公司审核情况",
+                                "info": "恭喜审核通过",
+                                "manageruserid": "平台人员1",
+                                "userid": "张三",
+                                "createdate": "2022-1-1"
+                            },
+                            {
+                                "title": "月嫂排名公司审核情况",
+                                "info": "恭喜审核通过",
+                                "manageruserid": "平台人员1",
+                                "userid": "张三",
+                                "createdate": "2022-1-1"
+                            },
+                            {
+                                "title": "月嫂排名公司审核情况",
+                                "info": "恭喜审核通过",
+                                "manageruserid": "平台人员1",
+                                "userid": "张三",
+                                "createdate": "2022-1-1"
+                            },
+                            {
+                                "title": "服务器升级",
+                                "info": "本次升级从2021-12-3到2021-12-4",
+                                "manageruserid": "平台人员1",
+                                "userid": "-",
+                                "createdate": "2022-1-1"
+                            }
+                        ]
+                    },
+                    columns: [
+                        [
+                            {field: 'title', title: '标题', width: 200, align: 'center'},
+                            {field: 'info', title: '内容', width: 300, align: 'center'},
+                            {field: 'manageruserid', title: '发布人员', width: 100, align: 'center'},
+                            {field: 'userid', title: '接收用户', width: 100, align: 'center'},
+                            {field: 'createdate', title: '发布日期', width: 100, align: 'center'}
+                        ]
+                    ],
+                    toolbar: "#tooldiv",
+                    pagination: true,
+                    singleSelect: true
+                });
+
+                // 初始化修改窗口
+                $('#dg').dialog({
+                    title: '新建通知',
+                    width: 500,
+                    height: 400,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            alert('ok');
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            alert('cancel');
+                        }
+                    }]
+                });
+
+            });
+
+            // 打开新建通知界面
+            function opendg() {
+                $('#dg').dialog('open');
+            }
+        </script>
+    </head>
+    <body>
+        <div id="tooldiv">
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'">删除</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="opendg();">新建</a>
+        </div>
+        <table id="noticelist"></table>
+        <div id="dg">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <input class="easyui-textbox" style="width:50%" data-options="label:'标题:'"/>
+                </div>
+                <div style="margin-bottom:20px">
+                    <textarea cols="50" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+server:
+  port: 9527
+
+spring:
+  application:
+    name: cloud-GateWay
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+

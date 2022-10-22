@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地服务</title>
+    <link rel="stylesheet" href="./assets/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="./assets/css/base.css">
+    <link rel="stylesheet" href="./assets/font/iconfont.css">
+</head>
+
+<body>
+
+    <header class="header-bar">
+        <nav class="bar-link">
+            <div class="city">城市：<span>南京</span></div>
+            <ul class="btns">
+                <li class="user-info">
+                    <span>张三</span>
+                    <a href="./back-manager.html">[ 个人中心 ]</a>
+                    <a href="#">[ 退出登录 ]</a>
+                </li>
+                <li><a href="./action.html#register">注册</a></li>
+                <li><a href="./action.html#login">登录</a></li>
+                <li><a href="./index.html">首页</a></li>
+                <li>
+                    商户推广
+                    <i class="iconfont icon-arrow-down"></i>
+                    <ul class="down-list-box">
+                        <!-- 通过锚点快速定位 -->
+                        <li><a href="./vip.html#level1">VIP-体验版</a></li>
+                        <li><a href="./vip.html#level2">VIP-初级版</a></li>
+                        <li><a href="./vip.html#level3">VIP-中级版</a></li>
+                        <li><a href="./vip.html#level4">VIP-高级版</a></li>
+                    </ul>
+                </li>
+                <li><a target="_black" href="https://www.itany.com">联系客服</a></li>
+                <li><a target="_black" href="https://www.itany.com">帮助</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="service-topbar">
+        <div class="main-box">
+            <div class="logo">
+                <img src="./assets/img/logo-c.png" alt="" srcset="">
+            </div>
+            <div class="search">
+                <div class="input-bar">
+                    <input class="search-input" type="text" placeholder="求职找房找服务">
+                    <span class="icon-search"></span>
+                </div>
+            </div>
+            <div class="release">
+                <!-- index.js 中完成动态事件绑定，请自行填充登录验证代码 -->
+                <span class="release-btn" id="publishingService">免费发布服务信息</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="service-loop-box">
+        <div class="main-box service-loop">
+            <div class="left-nav">
+                <div class="title">生活服务大全</div>
+                <div class="nav-list-box" id="leftMenu">
+                    <!-- 左侧浮动导航 -->
+                    <ul class="nav-list nav-loading"><!--初始化页面loading--></ul>
+                </div>
+            </div>
+            <div class="right-loop">
+                <div class="nav-title">
+                    <!-- 对应index.js的changeTagFun -->
+                    <a href="#life" data-target="life">本地生活服务</a>
+                    <a href="#business" data-target="business" >本地商务服务</a>
+                </div>
+                <div class="nav-body">
+                    <div class="body-top">
+                        <div class="swiper" id="navBodyTopLoop">
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <img src="./assets/img/index/loop03.jpg" alt="" srcset="">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="./assets/img/index/loop02.jpg" alt="" srcset="">
+                                </div>
+                                <div class="swiper-slide">
+                                    <img src="./assets/img/index/loop01.jpg" alt="" srcset="">
+                                </div>
+                            </div>
+                            <!-- 如果需要分页器 -->
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div>
+                    <div class="body-bottom">
+                        <p class="hot-title">
+                            <i class="iconfont icon-qian"></i>
+                            <span>热门推荐</span>
+                        </p>
+                        <ul class="hot-list nav-loading"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-box service-content" id="serviceContent">
+        <!-- 正文内容导航 -->
+        <div class="content-item nav-loading"><!--初始化页面loading--></div>
+    </main>
+
+    <footer class="footer-bar">
+        <div class="main-box">
+            <img src="./assets/img/logo.png" alt="" srcset="">
+            <div>
+                <p>夫子庙校区：南京市秦淮区龙蟠中路458号通济产业园北区2栋1层</p>
+                <p>Copyright (C) 2002-2019 itany.com 南京市网博优壹职业培训学校 苏ICP备 苏ICP备1606</p>
+            </div>
+            <i class="record rec1"></i>
+            <i class="record rec2"></i>
+            <i class="record rec3"></i>
+            <i class="record rec4"></i>
+            <i class="record rec5"></i>
+        </div>
+    </footer>
+    
+    <!-- 轮播图插件 -->
+    <script src="./assets/swiper/swiper-bundle.min.js"></script>
+    <!-- 弹出插件 -->
+    <script src="./assets/plugins/coco-modal.js"></script>
+    <!-- 页面基础共享JS加载 -->
+    <script src="./assets/js/base.js"></script>
+    <!-- 当前页面独享JS加载 -->
+    <script src="./assets/js/pages/index.js"></script>
+</body>
+
+</html>
