@@ -13,4 +13,10 @@
             </foreach>
             )
     </select>
+
+    <select id="listTypeByType" resultType="com.itany.dto.TypeDTO">
+        select *
+        from t_type
+        where type = #{type} and parentid is not null
+    </select>
 </mapper>

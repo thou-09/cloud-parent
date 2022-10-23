@@ -13,4 +13,10 @@
             </foreach>
             )
     </select>
+
+    <select id="listAreas" resultType="com.itany.dto.AreaDTO">
+        select *
+        from t_area
+        where parentid is not null
+    </select>
 </mapper>

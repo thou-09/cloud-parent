@@ -21,22 +21,38 @@ import java.util.List;
 public class ServerCommpanyDTO implements Serializable {
 
     private static final long serialVersionUID = 386303721433133250L;
+
     private Integer id;
+
     private String name;
+
     private String info;
+
     private String address;
+
     private String gps;
+
     private String scale;
+
     @JSONField(format = AppConsts.FORMAT_DATE)
     private Date createdate;
+
     @JSONField(format = AppConsts.FORMAT_DATE)
     private Date joindate;
+
     private Integer flag;
+
     private Integer type;
+
     private String linkman;
+
     private String phone;
+
     private Member member;
+
     private List<User> zzhs;
+
     private Integer zzhLength;
+
     private List<Annex> annexes;
 }

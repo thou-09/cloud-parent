@@ -53,7 +53,7 @@ public class User implements Serializable{
     /**
      * 头像
      */
-    private String heading;
+    private String headimg;
     /**
      * 性别，男 1 女 2
      */

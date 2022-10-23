@@ -22,4 +22,13 @@ public interface AreaMapper {
      * @date 2022/10/23
      */
     List<AreaDTO> listAreasByIds(@Param("ids") List<String> ids);
+
+    /**
+     * 查询所有二级地区，（简便处理）
+     *
+     * @return java.util.List<com.itany.dto.AreaDTO>
+     * @author Thou
+     * @date 2022/10/23
+     */
+    List<AreaDTO> listAreas();
 }

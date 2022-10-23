@@ -32,7 +32,7 @@ public class UserInput extends BaseInput implements Serializable {
 
     private String qq;
 
-    private String heading;
+    private String headimg;
 
     private Integer sex;
 

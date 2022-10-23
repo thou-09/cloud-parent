@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.itany.constants.AppConsts;
+import com.itany.dto.AreaDTO;
+import com.itany.dto.TypeDTO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -43,4 +45,12 @@ public class ServerInfoInput extends BaseInput implements Serializable {
     private Integer flag;
 
     private BigDecimal price;
+
+    private TypeDTO typeDTO;
+
+    private String servertype;
+
+    private AreaDTO areaDTO;
+
+    private String serverarea;
 }

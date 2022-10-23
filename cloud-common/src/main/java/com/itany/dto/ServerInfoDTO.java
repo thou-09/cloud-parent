@@ -29,11 +29,19 @@ public class ServerInfoDTO implements Serializable {
 
     private Integer userid;
 
+    private String username;
+
     private Integer commpanyid;
+
+    private String commpanyname;
+
+    private Integer commpanytype;
 
     private Date createdate;
 
     private Integer flag;
 
     private BigDecimal price;
+
+    private String memberlevel;
 }

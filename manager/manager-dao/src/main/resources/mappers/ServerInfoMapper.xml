@@ -6,8 +6,56 @@
 
     <insert id="insertServerInfo" useGeneratedKeys="true" keyProperty="id">
         insert into t_server_info
-            (servername, info, linkman, phone, userid, commpanyid, createdate, flag)
-        values
-            (#{servername}, #{info}, #{linkman}, #{phone}, #{userid}, #{commpanyid}, #{createdate}, #{flag});
+        (servername, info, linkman, phone, userid, commpanyid, createdate, flag)
+        values (#{servername}, #{info}, #{linkman}, #{phone}, #{userid}, #{commpanyid}, #{createdate}, #{flag});
     </insert>
+
+    <select id="listAllByParams" resultMap="dto_map">
+        select
+                tsi.id tsi_id,
+                tsi.servername tsi_servername,
+                tsi.info tsi_info,
+                tsi.linkman tsi_linkman,
+                tsi.phone tsi_phone,
+                tsi.userid tsi_userid,
+                tsi.commpanyid tsi_commpanyid,
+                tsi.createdate tsi_createdate,
+                tsi.flag tsi_flag,
+                tsi.price tsi_price,
+                tsc.name tsc_name,
+                tsc.type tsc_type,
+                tu.name tu_name,
+                tm.level tm_level
+        from t_server_info tsi
+                left join t_server_commpany tsc on tsi.commpanyid = tsc.id
+                left join t_user tu on tsi.userid = tu.id
+                left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                left join t_member tm on tmc.memberid = tm.id
+        <where>
+            and (tmc.startdate is null or now() &gt;= tmc.startdate) and (tmc.enddate is null or now() &lt;= tmc.enddate)
+            <if test="null != servername and '' != servername">
+                tsi.servername = #{servername}
+            </if>
+            <if test="null != flag">
+                tsi.flag = #{flag}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="dto_map" type="serverInfoDTO">
+        <id property="id" column="tsi-id"/>
+        <result property="servername" column="tsi_servername"/>
+        <result property="info" column="tsi_info"/>
+        <result property="linkman" column="tsi_linkman"/>
+        <result property="phone" column="tsi_phone"/>
+        <result property="userid" column="tsi_userid"/>
+        <result property="commpanyid" column="tsi_commpanyid"/>
+        <result property="createdate" column="tsi_createdate"/>
+        <result property="flag" column="tsi_flag"/>
+        <result property="price" column="tsi_price"/>
+        <result property="commpanyname" column="tsc_name"/>
+        <result property="commpanytype" column="tsc_type"/>
+        <result property="username" column="tu_name"/>
+        <result property="memberlevel" column="tm_level"/>
+    </resultMap>
 </mapper>

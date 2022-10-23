@@ -12,118 +12,30 @@
                 $('#serverlist').datagrid({
                     title: '平台服务列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 10,
-                        "rows": [
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            },
-                            {
-                                "servername": "应急贷款服务",
-                                "linkman": "老张",
-                                "phone": "1231231231",
-                                "commpanyid": "康华贷款公司",
-                                "commpanytype": "商务",
-                                "commpanylevel": "VIP2"
-                                ,
-                                "createdate": "2022-11-1",
-                                "flag": "上线",
-                                "userid": "王五"
-                            }
-                        ]
-                    },
+                    url: '/manager/servers/list',
                     columns: [
                         [
                             {field: 'servername', title: '服务名称', width: 100, align: 'center'},
                             {field: 'linkman', title: '联系人', width: 100, align: 'center'},
                             {field: 'phone', title: '联系电话', width: 100, align: 'center'},
-                            {field: 'commpanyid', title: '所属服务商', width: 100, align: 'center'},
-                            {field: 'commpanytype', title: '服务商类型', width: 100, align: 'center'},
-                            {field: 'commpanylevel', title: '服务商等级', width: 100, align: 'center'},
-                            {field: 'userid', title: '发布账户名', width: 100, align: 'center'},
+                            {field: 'commpanyname', title: '所属服务商', width: 100, align: 'center'},
+                            {
+                                field: 'commpanytype',
+                                title: '服务商类型',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return val === 1 ? '生活' : '商务';
+                                }
+                            },
+                            {field: 'memberlevel', title: '服务商等级', width: 100, align: 'center'},
+                            {field: 'username', title: '发布账户名', width: 100, align: 'center'},
                             {field: 'createdate', title: '发布日期', width: 100, align: 'center'},
-                            {field: 'flag', title: '状态', width: 100, align: 'center'},
+                            {
+                                field: 'flag', title: '状态', width: 100, align: 'center', formatter: (val, row) => {
+                                    return val === 1 ? "<font color='green'>上线</font>" : "<font color='red'>下线</font>";
+                                }
+                            },
                             {
                                 field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
                                     return "<a href='javascript:showDg();'>查看</a>";
@@ -133,6 +45,7 @@
                     ],
                     toolbar: "#tooldiv",
                     pagination: true,
+                    pageList: [2, 4, 6, 8, 10],
                     singleSelect: true
                 });
 
@@ -175,21 +88,14 @@
                 // 初始化查询按钮
                 $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
                     .click(function () {
-                        alert("开始查询");
+                        $('#serverlist').datagrid('load', {
+                            servername: $('#tooldiv input[name=servername]').val(),
+                            flag: $('#tooldiv select[name=flag]').val(),
+                        });
                     });
 
                 // 初始化下拉控件
                 $("#servertype").combobox({
-                    data: [{
-                        id: 1,
-                        text: "应急贷款"
-                    }, {
-                        id: 2,
-                        text: "期货交易"
-                    }, {
-                        id: 3,
-                        text: "证券交易"
-                    }],
                     width: 350,
                     label: "服务范围",
                     valueField: 'id',
@@ -197,20 +103,11 @@
                 });
 
                 $("#serverarea").combobox({
-                    data: [{
-                        id: 1,
-                        text: "鼓楼区"
-                    }, {
-                        id: 2,
-                        text: "玄武区"
-                    }, {
-                        id: 3,
-                        text: "秦淮区"
-                    }],
+                    url: '/manager/areas/list',
                     label: "服务地区",
                     width: 350,
                     valueField: 'id',
-                    textField: 'text'
+                    textField: 'name'
                 });
             });
 
@@ -234,11 +131,11 @@
     </head>
     <body>
         <div id="tooldiv">
-            <input type="text" placeholder="请输入服务名"/>
-            <select>
+            <input name="servername" type="text" placeholder="请输入服务名"/>
+            <select name="flag">
                 <option value="">请选状态</option>
-                <option value="">上线</option>
-                <option value="">下线</option>
+                <option value="1">上线</option>
+                <option value="0">下线</option>
             </select>
             <a id="submit_search">搜索</a>
             <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="openeditdg();">修改</a>
