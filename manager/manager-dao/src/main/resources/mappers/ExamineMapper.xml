@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.ExamineMapper">
+
+    <select id="listCompanyExamineByParams" resultMap="dto_map">
+        select
+                te.id te_id,
+                te.title te_title,
+                te.name te_name,
+                te.typeid te_typeid,
+                te.createdate te_createdate,
+                te.linkman te_linkman,
+                te.phone te_phone,
+                te.userid te_userid,
+                te.commpanycreatedate te_commpanycreatedate,
+                te.address te_address,
+                te.scale te_scale,
+                te.gps te_gps,
+                te.flag te_flag,
+                te.info te_info
+        from t_examine te
+        <where>
+            and te.examinetype = 1
+            <if test="null != name and '' != name">
+                and te.name = #{name}
+            </if>
+            <if test="null != flag">
+                and te.flag = #{flag}
+            </if>
+        </where>
+    </select>
+
+    <select id="getCompanyExamineById" resultMap="dto_map_2">
+        select
+                te.id te_id,
+                te.title te_title,
+                te.name te_name,
+                te.typeid te_typeid,
+                te.createdate te_createdate,
+                te.linkman te_linkman,
+                te.phone te_phone,
+                te.userid te_userid,
+                te.commpanycreatedate te_commpanycreatedate,
+                te.address te_address,
+                te.scale te_scale,
+                te.gps te_gps,
+                te.flag te_flag,
+                te.info te_info,
+                ta.id ta_id,
+                ta.path ta_path,
+                ta.filename ta_filename,
+                ta.type ta_type
+        from t_examine te
+                left join t_annex ta on te.id = ta.keyid
+        where
+              (ta.tabletype is null or ta.tabletype = 1)
+            and te.id = #{id}
+    </select>
+
+    <select id="listServerExamineByParams" resultMap="dto_map">
+        select
+                te.id te_id,
+                te.title te_title,
+                te.name te_name,
+                te.createdate te_createdate,
+                te.linkman te_linkman,
+                te.phone te_phone,
+                te.userid te_userid,
+                te.flag te_flag,
+                te.info te_info,
+                te.serverarea te_serverarea,
+                te.servertype te_servertype,
+                te.commpanyid te_commpanyid,
+                te.price te_price,
+                tsc.name tsc_name
+        from t_examine te
+                left join t_server_commpany tsc on tsc.id = te.commpanyid
+        <where>
+            and te.examinetype = 2
+            <if test="null != name and '' != name">
+                and te.name = #{name}
+            </if>
+            <if test="null != flag">
+                and te.flag = #{flag}
+            </if>
+        </where>
+    </select>
+
+    <select id="getServerExamineById" resultMap="dto_map_2">
+        select
+            te.id te_id,
+            te.title te_title,
+            te.name te_name,
+            te.typeid te_typeid,
+            te.createdate te_createdate,
+            te.linkman te_linkman,
+            te.phone te_phone,
+            te.userid te_userid,
+            te.commpanycreatedate te_commpanycreatedate,
+            te.address te_address,
+            te.scale te_scale,
+            te.gps te_gps,
+            te.flag te_flag,
+            te.info te_info,
+            te.serverarea te_serverarea,
+            te.servertype te_servertype,
+            te.commpanyid te_commpanyid,
+            te.price te_price,
+            tsc.name tsc_name,
+            ta.id ta_id,
+            ta.path ta_path,
+            ta.filename ta_filename,
+            ta.type ta_type
+        from t_examine te
+                 left join t_annex ta on te.id = ta.keyid
+                 left join t_server_commpany tsc on tsc.id = te.commpanyid
+        where
+            (ta.tabletype is null or ta.tabletype = 1)
+          and te.id = #{id}
+    </select>
+
+    <update id="updateExamineFlag">
+        update t_examine
+        set flag = #{flag}, examine_info = #{examineInfo}
+        where id = #{id}
+    </update>
+    
+    <insert id="insertServerTypeBatch" parameterType="list">
+        insert into t_server_type (typeid, serverid)
+        values
+        <foreach collection="list" item="st" separator=",">
+            (#{st.typeid}, #{st.serverid})
+        </foreach>
+    </insert>
+
+    <insert id="insertServerAreaBatch" parameterType="list">
+        insert into t_server_area (serverid, areaid)
+        values
+        <foreach collection="list" item="sa" separator=",">
+            (#{sa.serverid}, #{sa.areaid})
+        </foreach>
+    </insert>
+
+    <resultMap id="dto_map" type="examineDTO">
+        <id property="id" column="te_id"/>
+        <result property="title" column="te_title"/>
+        <result property="name" column="te_name"/>
+        <result property="typeid" column="te_typeid"/>
+        <result property="createdate" column="te_createdate"/>
+        <result property="linkman" column="te_linkman"/>
+        <result property="phone" column="te_phone"/>
+        <result property="userid" column="te_userid"/>
+        <result property="commpanycreatedate" column="te_commpanycreatedate"/>
+        <result property="address" column="te_address"/>
+        <result property="scale" column="te_scale"/>
+        <result property="gps" column="te_gps"/>
+        <result property="flag" column="te_flag"/>
+        <result property="info" column="te_info"/>
+        <result property="serverarea" column="te_serverarea"/>
+        <result property="servertype" column="te_servertype"/>
+        <result property="commpanyid" column="te_commpanyid"/>
+        <result property="commpanyname" column="tsc_name"/>
+        <result property="price" column="te_price"/>
+    </resultMap>
+
+    <resultMap id="dto_map_2" type="examineDTO">
+        <id property="id" column="te_id"/>
+        <result property="title" column="te_title"/>
+        <result property="name" column="te_name"/>
+        <result property="typeid" column="te_typeid"/>
+        <result property="createdate" column="te_createdate"/>
+        <result property="linkman" column="te_linkman"/>
+        <result property="phone" column="te_phone"/>
+        <result property="userid" column="te_userid"/>
+        <result property="commpanycreatedate" column="te_commpanycreatedate"/>
+        <result property="address" column="te_address"/>
+        <result property="scale" column="te_scale"/>
+        <result property="gps" column="te_gps"/>
+        <result property="flag" column="te_flag"/>
+        <result property="info" column="te_info"/>
+        <result property="serverarea" column="te_serverarea"/>
+        <result property="servertype" column="te_servertype"/>
+        <result property="commpanyid" column="te_commpanyid"/>
+        <result property="commpanyname" column="tsc_name"/>
+        <result property="price" column="te_price"/>
+        <collection property="annexes" ofType="annex">
+            <id property="id" column="ta_id"/>
+            <result property="path" column="ta_path"/>
+            <result property="filename" column="ta_filename"/>
+            <result property="type" column="ta_type"/>
+        </collection>
+    </resultMap>
+</mapper>

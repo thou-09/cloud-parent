@@ -7,98 +7,35 @@
         <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/js/_my.js}"></script>
         <script type="text/javascript">
             $(function () {
                 $('#examinelist').datagrid({
                     title: '服务审核列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 10,
-                        "rows": [
-                            {
-                                "title": "安康贷款服务审核",
-                                "name": "安康贷款服务",
-                                "servertype": "房屋贷款,应急贷款,车辆贷款",
-                                "commpanyid": "安康贷款公司"
-                                ,
-                                "serverarea": "玄武区,秦淮区,马群区",
-                                "info": "",
-                                "createdate": "2022-1-1",
-                                "userid": "李四",
-                                "flag": "已通过"
-                            },
-                            {
-                                "title": "安康贷款服务审核",
-                                "name": "安康贷款服务",
-                                "servertype": "房屋贷款,应急贷款,车辆贷款",
-                                "commpanyid": "安康贷款公司"
-                                ,
-                                "serverarea": "玄武区,秦淮区,马群区",
-                                "info": "",
-                                "createdate": "2022-1-1",
-                                "userid": "李四",
-                                "flag": "已通过"
-                            },
-                            {
-                                "title": "安康贷款服务审核",
-                                "name": "安康贷款服务",
-                                "servertype": "房屋贷款,应急贷款,车辆贷款",
-                                "commpanyid": "安康贷款公司"
-                                ,
-                                "serverarea": "玄武区,秦淮区,马群区",
-                                "info": "",
-                                "createdate": "2022-1-1",
-                                "userid": "李四",
-                                "flag": "已通过"
-                            },
-                            {
-                                "title": "安康贷款服务审核",
-                                "name": "安康贷款服务",
-                                "servertype": "房屋贷款,应急贷款,车辆贷款",
-                                "commpanyid": "安康贷款公司"
-                                ,
-                                "serverarea": "玄武区,秦淮区,马群区",
-                                "info": "",
-                                "createdate": "2022-1-1",
-                                "userid": "李四",
-                                "flag": "已通过"
-                            },
-                            {
-                                "title": "安康贷款服务审核",
-                                "name": "安康贷款服务",
-                                "servertype": "房屋贷款,应急贷款,车辆贷款",
-                                "commpanyid": "安康贷款公司"
-                                ,
-                                "serverarea": "玄武区,秦淮区,马群区",
-                                "info": "",
-                                "createdate": "2022-1-1",
-                                "userid": "李四",
-                                "flag": "已通过"
-                            },
-                            {
-                                "title": "安康贷款服务审核",
-                                "name": "安康贷款服务",
-                                "servertype": "房屋贷款,应急贷款,车辆贷款",
-                                "commpanyid": "安康贷款公司"
-                                ,
-                                "serverarea": "玄武区,秦淮区,马群区",
-                                "info": "",
-                                "createdate": "2022-1-1",
-                                "userid": "李四",
-                                "flag": "已通过"
-                            }
-                        ]
-                    },
+                    url: '/manager/examines/server/list',
                     columns: [
                         [
                             {field: 'title', title: '审核标题', width: 200, align: 'center'},
                             {field: 'name', title: '服务名称', width: 200, align: 'center'},
-                            {field: 'commpanyid', title: '服务商名称', width: 200, align: 'center'},
+                            {field: 'commpanyname', title: '服务商名称', width: 200, align: 'center'},
                             {field: 'servertype', title: '服务范围', width: 200, align: 'center'},
                             {field: 'serverarea', title: '服务地区', width: 100, align: 'center'},
                             {field: 'createdate', title: '提交日期', width: 100, align: 'center'},
-                            {field: 'userid', title: '申请账户名', width: 100, align: 'center'},
-                            {field: 'flag', title: '状态', width: 100, align: 'center'},
+                            {field: 'linkman', title: '申请账户名', width: 100, align: 'center'},
+                            {
+                                field: 'flag', title: '状态', width: 100, align: 'center', formatter: (val, row) => {
+                                    if (val === 0) {
+                                        return '待审核';
+                                    }
+                                    if (val === 1) {
+                                        return '<font color="green">已通过</font>';
+                                    }
+                                    if (val === 2) {
+                                        return '<font color="red">未通过</font>';
+                                    }
+                                }
+                            },
                             {
                                 field: 'cz', title: '操作', width: 200, align: 'center', formatter: function (val, row) {
                                     return "<a href='javascript:showDg();'>查看服务详情</a>";
@@ -108,6 +45,7 @@
                     ],
                     toolbar: "#tooldiv",
                     pagination: true,
+                    pageList: [2, 4, 6, 8, 10],
                     singleSelect: true
                 });
 
@@ -115,7 +53,7 @@
                 $('#dg').dialog({
                     title: '加盟商详情',
                     width: 700,
-                    height: 700,
+                    height: 600,
                     closed: true,
                     cache: false,
                     modal: true,
@@ -133,16 +71,12 @@
                     buttons: [{
                         text: '提交',
                         iconCls: 'icon-ok',
-                        handler: function () {
-                            // 多选中下拉获取
-                            console.log($("#editserver").combobox("getValues"));
-                            console.log($("#editarea").combobox("getValues"));
-                        }
+                        handler: examine
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
-                            ;
+                            $('#ff').reset();
+                            $("#examinedg").dialog('close');
                         }
                     }]
                 });
@@ -150,29 +84,100 @@
                 // 初始化查询按钮
                 $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
                     .click(function () {
-                        alert("开始查询");
+                        $('#examinelist').datagrid('load', {
+                            name: $('#tooldiv input[name=name]').val(),
+                            flag: $('#tooldiv select[name=flag]').val(),
+                        });
                     });
             });
 
             // 查询弹出方法
             function showDg() {
-                $('#dg').dialog("open");
+                let row = $('#examinelist').datagrid('getSelected');
+                if (null != row) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/examines/server/' + row.id,
+                        data : {},
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data);
+                            if (data.status === '00000') {
+                                let info = data.data;
+                                $('#dg-name').textbox('setValue', info.name);
+                                $('#dg-commpanyname').textbox('setValue', info.commpanyname);
+                                $('#dg-address').textbox('setValue', info.address);
+                                $('#dg-phone').textbox('setValue', info.phone);
+                                $('#dg-linkman').textbox('setValue', info.linkman);
+                                $('#dg-servertype').textbox('setValue', info.servertype);
+                                $('#dg-serverarea').textbox('setValue', info.serverarea);
+                                $('#dg-commpanycreatedate').textbox('setValue', info.commpanycreatedate);
+                                $('#dg-info').val(info.info);
+
+                                $('#dg-imgtab').empty();
+                                for (let annex of info.annexes) {
+                                    $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px; margin: 0 5px'>");
+                                }
+
+                                $('#dg').dialog('open');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
             }
 
             // 打开审核操作界面方法
             function openexaminedg() {
+                let row = $('#examinelist').datagrid('getSelected');
+                if (row == null) {
+                    $.messager.alert('错误', '请先选择一条数据')
+                    return;
+                }
+                if (row.flag !== 0) {
+                    $.messager.alert('错误', '该数据已被审核')
+                    return;
+                }
                 $("#examinedg").dialog("open");
+                $('#ff').reset();
+            }
+
+            // 审核
+            function examine() {
+                let row = $('#examinelist').datagrid('getSelected');
+                if (row != null) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/examines/server/examine',
+                        data : {
+                            id: row.id,
+                            flag: $('#ff select[name=flag]').val(),
+                            examineInfo: $('#ff textarea[name=examineInfo]').val()
+                        },
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data);
+                            if (data.status === '00000') {
+                                $("#examinedg").dialog("close");
+                                $('#examinelist').datagrid('reload');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
             }
         </script>
     </head>
     <body>
         <div id="tooldiv">
-            <input type="text" placeholder="请输入查询加盟商"/>
-            <select>
+            <input name="name" type="text" placeholder="请输入查询加盟商"/>
+            <select name="flag">
                 <option value="">请选状态</option>
-                <option value="">待审核</option>
-                <option value="">已通过</option>
-                <option value="">未通过</option>
+                <option value="0">待审核</option>
+                <option value="1">已通过</option>
+                <option value="2">未通过</option>
             </select>
             <a id="submit_search">搜索</a>
             <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="openexaminedg();">审核</a>
@@ -182,48 +187,43 @@
         <div id="dg">
             <div align="center" style="margin-top: 30px">
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'" readonly="true"
-                           value="安康贷款服务"/>
+                    <input id="dg-name" class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'服务商名称:'" readonly="true"
-                           value="安康贷款公司"/>
+                    <input id="dg-commpanyname" class="easyui-textbox" style="width:50%" data-options="label:'服务商名称:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'公司地址:'" readonly="true"
-                           value="南京市鼓楼区xxxxxx"/>
+                    <input id="dg-address" class="easyui-textbox" style="width:50%" data-options="label:'公司地址:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'" readonly="true"
-                           value="123456123"/>
+                    <input id="dg-phone" class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'联系人:'" readonly="true"
-                           value="谢先生"/>
+                    <input id="dg-linkman" class="easyui-textbox" style="width:50%;" data-options="label:'联系人:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务范围:'" readonly="true"
-                           value="房屋贷款,应急贷款,车辆贷款"/>
+                    <input id="dg-servertype" class="easyui-textbox" style="width:50%;" data-options="label:'服务范围:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务地区:'" readonly="true"
-                           value="玄武区,秦淮区,马群区"/>
+                    <input id="dg-serverarea" class="easyui-textbox" style="width:50%;" data-options="label:'服务地区:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
-                           value="2021-1-1"/>
+                    <input id="dg-commpanycreatedate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                <textarea cols="80" rows="5" readonly="true" style="border: 0px;">
-这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介
+                <textarea id="dg-info" cols="80" rows="5" readonly="true" style="border: 0px;">
+                    文本
                 </textarea>
                 </div>
-                <div class="imgtab">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
+                <div id="dg-imgtab" class="imgtab">
                 </div>
             </div>
         </div>
@@ -237,9 +237,9 @@
                                 审核状态:
                             </td>
                             <td>
-                                <select name="search_type" id="search_type" style="width:100px">
-                                    <option value="be_intro">通过</option>
-                                    <option value="be_intro">不通过</option>
+                                <select name="flag" id="search_type" style="width:100px">
+                                    <option value="1">通过</option>
+                                    <option value="2">不通过</option>
                                 </select>
                             </td>
                         </tr>
@@ -248,7 +248,7 @@
                                 审核备注:
                             </td>
                             <td>
-                                <textarea rows="10" cols="30"></textarea>
+                                <textarea name="examineInfo" rows="10" cols="30"></textarea>
                             </td>
                         </tr>
                     </table>

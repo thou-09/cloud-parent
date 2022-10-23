@@ -6,7 +6,6 @@ import com.itany.constants.AppConsts;
 import com.itany.constants.AppExceptionMsgEnum;
 import com.itany.dto.ServerCommpanyDTO;
 import com.itany.entity.Annex;
-import com.itany.entity.User;
 import com.itany.exception.AppException;
 import com.itany.input.ServerCommpanyInput;
 import com.itany.mapper.AnnexMapper;
@@ -115,7 +114,7 @@ public class ServerCommpanyServiceImpl implements ServerCommpanyService {
         ServerCommpanyDTO dto = Optional.ofNullable(serverCommpanyMapper.getServerCommpanyById(id))
                 .orElseThrow(() -> new AppException(AppExceptionMsgEnum.SERVER_COMPANY_NOT_EXIST));
         List<Annex> annexes = dto.getAnnexes().stream()
-                .sorted(Comparator.comparing(Annex::getType).reversed())
+                .sorted(Comparator.comparing(Annex::getType))
                 .collect(Collectors.toList());
         dto.setAnnexes(annexes);
         return dto;

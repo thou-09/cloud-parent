@@ -1,8 +1,8 @@
 package com.itany.controllers;
 
+import com.itany.dto.ManagerUserDTO;
 import com.itany.input.ManagerUserInput;
 import com.itany.service.ManagerUserService;
-import com.itany.vo.ManagerUserVO;
 import com.itany.vo.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,7 +25,7 @@ public class ManagerUserController {
 
     @PostMapping("/login")
     public ResponseResult<Object> findByParams(@Validated ManagerUserInput in) {
-        ManagerUserVO vo = managerUserService.login(in);
+        ManagerUserDTO vo = managerUserService.login(in);
         // TODO 缓存到 session 中
         return ResponseResult.success();
     }

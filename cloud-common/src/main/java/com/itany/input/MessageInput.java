@@ -19,12 +19,18 @@ import java.util.Date;
 public class MessageInput extends BaseInput implements Serializable {
 
     private static final long serialVersionUID = 140934990514194042L;
+
     private Integer id;
+
     private String name;
+
     private String msg;
+
     private String phone;
+
     private String area;
+
     private Integer commpanyid;
-    @JSONField(format = AppConsts.FORMAT_DATE)
+
     private Date createdate;
 }

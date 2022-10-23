@@ -1,17 +1,13 @@
 package com.itany.input;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.itany.constants.AppConsts;
 import com.itany.validation.Update;
 import com.itany.validation.UpdateFlag;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Date;
@@ -46,9 +42,9 @@ public class ServerCommpanyInput extends BaseInput implements Serializable {
     @NotBlank(message = "规模不可为空", groups = {Update.class})
     private String scale;
 
+    @NotNull(message = "注册时间格式必须为 yyyy-MM-dd", groups = {Update.class})
     private Date createdate;
 
-    @NotNull(message = "注册时间格式必须为 yyyy-MM-dd", groups = {Update.class})
     private Date joindate;
 
     private Integer flag;

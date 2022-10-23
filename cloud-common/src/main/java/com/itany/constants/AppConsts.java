@@ -57,6 +57,18 @@ public interface AppConsts {
      * 服务审核
      */
     Integer EXAMINE_TYPE_SERVE = 2;
+    /**
+     * 待审核
+     */
+    Integer EXAMINE_FLAG_WAIT = 0;
+    /**
+     * 审核通过
+     */
+    Integer EXAMINE_FLAG_SUCCESS = 1;
+    /**
+     * 审核不通过
+     */
+    Integer EXAMINE_FLAG_FAIL = 2;
 
     // ServerCommpany 相关
     /**

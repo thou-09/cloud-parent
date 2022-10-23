@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.ServerInfoMapper">
+
+    <insert id="insertServerInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_server_info
+            (servername, info, linkman, phone, userid, commpanyid, createdate, flag)
+        values
+            (#{servername}, #{info}, #{linkman}, #{phone}, #{userid}, #{commpanyid}, #{createdate}, #{flag});
+    </insert>
+</mapper>

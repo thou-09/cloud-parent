@@ -96,8 +96,13 @@
             <if test="null != flag">
                 flag = #{flag},
             </if>
-            <if test="null != companyid and -1 == companyid">
-                companyid = null,
+            <if test="null != companyid">
+                <if test="-1 == companyid">
+                    companyid = null,
+                </if>
+                <if test="-1 != companyid">
+                    companyid = #{companyid},
+                </if>
             </if>
         </set>
         where id = #{id};

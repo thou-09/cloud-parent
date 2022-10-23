@@ -85,7 +85,7 @@
                 $('#dg').dialog({
                     title: '服务商详情',
                     width: 700,
-                    height: 720,
+                    height: 600,
                     closed: true,
                     cache: false,
                     modal: true,
@@ -95,7 +95,7 @@
                 $("#editdg").dialog({
                     title: '服务商修改',
                     width: 700,
-                    height: 720,
+                    height: 600,
                     closed: true,
                     cache: false,
                     modal: true,
@@ -155,12 +155,12 @@
                             $('#dg-zzhLength').textbox('setValue', info.zzhLength);
                             $('#dg-type').textbox('setValue',
                                 info.type === 1 ? '生活' : '商务');
-                            $('#dg-joindate').textbox('setValue', info.joindate);
+                            $('#dg-createdate').textbox('setValue', info.createdate);
                             $('#dg-info').val(info.info);
 
                             $('#dg-imgtab').empty();
                             for (let annex of info.annexes) {
-                                $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px;'>");
+                                $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px; margin: 0 5px'>");
                             }
 
                             $('#dg').dialog('open');
@@ -196,7 +196,7 @@
                             $('#editdg-zzhLength').textbox('setValue', info.zzhLength);
                             $('#editdg-type').textbox('setValue',
                                 info.type === 1 ? '生活' : '商务');
-                            $('#editdg-joindate').textbox('setValue', info.joindate);
+                            $('#editdg-createdate').textbox('setValue', info.createdate);
                             $('#editdg-gps').textbox('setValue', info.gps);
                             $('#editdg-info').val(info.info);
 
@@ -356,7 +356,7 @@
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-joindate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                    <input id="dg-createdate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
@@ -392,7 +392,7 @@
                         <input id="editdg-type" name="typeStr" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" value=""/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-joindate" name="joindate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" value=""/>
+                        <input id="editdg-createdate" name="createdate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" value=""/>
                     </div>
                     <div style="margin-bottom:20px">
                         <input id="editdg-gps" name="gps" class="easyui-textbox" style="width:50%;" data-options="label:'GPS坐标:'" value=""/>

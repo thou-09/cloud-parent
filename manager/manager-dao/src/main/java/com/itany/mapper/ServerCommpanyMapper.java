@@ -42,4 +42,13 @@ public interface ServerCommpanyMapper {
      * @date 2022/10/21
      */
     ServerCommpanyDTO getServerCommpanyById(@Param("id") Integer id);
+
+    /**
+     * 添加 ServerCommpany
+     *
+     * @param in -
+     * @author Thou
+     * @date 2022/10/23
+     */
+    void insertServerCommpany(ServerCommpanyInput in);
 }

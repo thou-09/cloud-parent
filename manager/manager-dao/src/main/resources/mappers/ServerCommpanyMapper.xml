@@ -4,6 +4,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.itany.mapper.ServerCommpanyMapper">
 
+    <insert id="insertServerCommpany" useGeneratedKeys="true" keyProperty="id">
+        insert into t_server_commpany
+            (name, info, address, gps, scale, createdate, joindate, flag, type, linkman,
+                                       phone)
+        values (#{name}, #{info}, #{address}, #{gps}, #{scale}, #{createdate}, #{joindate}, #{flag}, #{type},
+            #{linkman}, #{phone});
+    </insert>
+
     <select id="listAllByParams" resultMap="dto_map">
         select
                tsc.id tsc_id,
@@ -142,6 +150,7 @@
         <result property="name" column="tsc_name"/>
         <result property="address" column="tsc_address"/>
         <result property="linkman" column="tsc_linkman"/>
+        <result property="createdate" column="tsc_createdate"/>
         <result property="joindate" column="tsc_joindate"/>
         <result property="phone" column="tsc_phone"/>
         <result property="gps" column="tsc_gps"/>

@@ -17,6 +17,8 @@ public enum AppExceptionMsgEnum {
     USERNAME_AND_PASSWORD_ERROR("B0001", "用户名或密码错误"),
     USER_NOT_EXIST("B0002", "用户不存在"),
     SERVER_COMPANY_NOT_EXIST("B0003", "服务商不存在"),
+    EXAMINE_NOT_EXIST("B0004", "审核数据不存在"),
+    DATA_HAS_EXAMINED("B0005", "数据已被审核"),
     ;
 
     /**

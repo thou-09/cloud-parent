@@ -7,8 +7,6 @@ import com.itany.input.ManagerUserInput;
 import com.itany.mapper.ManagerUserMapper;
 import com.itany.service.ManagerUserService;
 import com.itany.util.Md5Utils;
-import com.itany.vo.ManagerUserVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,14 +29,10 @@ public class ManagerUserServiceImpl implements ManagerUserService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public ManagerUserVO login(ManagerUserInput input) {
+    public ManagerUserDTO login(ManagerUserInput input) {
         input.setPassword(Md5Utils.md5(input.getPassword()));
 
-        ManagerUserDTO dto = Optional.ofNullable(managerUserMapper.getOneByUsernameAndPassword(input))
+        return Optional.ofNullable(managerUserMapper.getOneByUsernameAndPassword(input))
                 .orElseThrow(() -> new AppException(AppExceptionMsgEnum.USERNAME_AND_PASSWORD_ERROR));
-
-        ManagerUserVO vo = new ManagerUserVO();
-        BeanUtils.copyProperties(dto, vo);
-        return vo;
     }
 }

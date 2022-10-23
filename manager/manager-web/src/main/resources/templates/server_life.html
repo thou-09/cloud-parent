@@ -85,7 +85,7 @@
                 $('#dg').dialog({
                     title: '服务商详情',
                     width: 700,
-                    height: 700,
+                    height: 600,
                     closed: true,
                     cache: false,
                     modal: true,
@@ -95,7 +95,7 @@
                 $("#editdg").dialog({
                     title: '服务商修改',
                     width: 700,
-                    height: 700,
+                    height: 600,
                     closed: true,
                     cache: false,
                     modal: true,
@@ -136,38 +136,40 @@
 
             // 查询弹出方法
             function showDg() {
-                let id = $('#commpanylist').datagrid('getSelected').id;
-                $.ajax({
-                    type : 'post',
-                    url : '/manager/serverCompanies/company/' + id,
-                    data : {},
-                    dataType : 'json',
-                    success : (data) => {
-                        // console.log(data)
-                        if (data.status === '00000') {
-                            let info = data.data;
-                            $('#dg-name').textbox('setValue', info.name);
-                            $('#dg-address').textbox('setValue', info.address);
-                            $('#dg-phone').textbox('setValue', info.phone);
-                            $('#dg-linkman').textbox('setValue', info.linkman);
-                            $('#dg-scale').textbox('setValue', info.scale);
-                            $('#dg-zzhLength').textbox('setValue', info.zzhLength);
-                            $('#dg-type').textbox('setValue',
-                                info.type === 1 ? '生活' : '商务');
-                            $('#dg-joindate').textbox('setValue', info.joindate);
-                            $('#dg-info').val(info.info);
+                let row = $('#commpanylist').datagrid('getSelected')
+                if (null != row) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/serverCompanies/company/' + row.id,
+                        data : {},
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data)
+                            if (data.status === '00000') {
+                                let info = data.data;
+                                $('#dg-name').textbox('setValue', info.name);
+                                $('#dg-address').textbox('setValue', info.address);
+                                $('#dg-phone').textbox('setValue', info.phone);
+                                $('#dg-linkman').textbox('setValue', info.linkman);
+                                $('#dg-scale').textbox('setValue', info.scale);
+                                $('#dg-zzhLength').textbox('setValue', info.zzhLength);
+                                $('#dg-type').textbox('setValue',
+                                    info.type === 1 ? '生活' : '商务');
+                                $('#dg-createdate').textbox('setValue', info.createdate);
+                                $('#dg-info').val(info.info);
 
-                            $('#dg-imgtab').empty();
-                            for (let annex of info.annexes) {
-                                $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px;'>");
+                                $('#dg-imgtab').empty();
+                                for (let annex of info.annexes) {
+                                    $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px; margin: 0 5px'>");
+                                }
+
+                                $('#dg').dialog('open');
+                            } else {
+                                $.messager.alert('错误', data.message);
                             }
-
-                            $('#dg').dialog('open');
-                        } else {
-                            $.messager.alert('错误', data.message);
                         }
-                    }
-                })
+                    })
+                }
             }
 
             // 打开修改界面方法
@@ -195,7 +197,7 @@
                             $('#editdg-zzhLength').textbox('setValue', info.zzhLength);
                             $('#editdg-type').textbox('setValue',
                                 info.type === 1 ? '生活' : '商务');
-                            $('#editdg-joindate').textbox('setValue', info.joindate);
+                            $('#editdg-createdate').textbox('setValue', info.createdate);
                             $('#editdg-gps').textbox('setValue', info.gps);
                             $('#editdg-info').val(info.info);
 
@@ -355,7 +357,7 @@
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-joindate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
+                    <input id="dg-createdate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
@@ -391,7 +393,7 @@
                         <input id="editdg-type" name="typeStr" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" value=""/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-joindate" name="joindate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" value=""/>
+                        <input id="editdg-createdate" name="createdate" class="easyui-textbox" style="width:50%;" data-options="label:'注册时间:'" value=""/>
                     </div>
                     <div style="margin-bottom:20px">
                         <input id="editdg-gps" name="gps" class="easyui-textbox" style="width:50%;" data-options="label:'GPS坐标:'" value=""/>
