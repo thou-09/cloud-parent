@@ -34,10 +34,10 @@
                    from t_user
                    where companyid = tsc.id) as tsc_zzhLength
         from t_server_commpany tsc
-                 left join t_member_commpany tmc on tsc.id = tmc.commpanyid
-                 left join t_member tm on tmc.memberid = tm.id
+                left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                        and CURDATE() &gt;= tmc.startdate and CURDATE() &lt;= tmc.enddate
+                left join t_member tm on tmc.memberid = tm.id
         <where>
-            and (tmc.startdate is null or now() &gt;= tmc.startdate) and (tmc.enddate is null or now() &lt;= tmc.enddate)
             <if test="null != name and '' != name">
                 and tsc.name = #{name}
             </if>
@@ -83,12 +83,12 @@
                     where companyid = tsc.id) as tsc_zzhLength
         from t_server_commpany tsc
                 left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                        and CURDATE() &gt;= tmc.startdate and CURDATE() &lt;= tmc.enddate
                 left join t_member tm on tm.id = tmc.memberid
                 left join t_annex ta on tsc.id = ta.keyid
         where
               (ta.tabletype is null or ta.tabletype = 2)
           and tsc.id = #{id}
-          and (tmc.startdate is null or now() &gt;= tmc.startdate) and (tmc.enddate is null or now() &lt;= tmc.enddate)
     </select>
 
     <update id="updateServerCommpanyById">

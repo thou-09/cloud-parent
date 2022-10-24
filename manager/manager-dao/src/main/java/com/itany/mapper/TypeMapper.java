@@ -32,4 +32,6 @@ public interface TypeMapper {
      * @date 2022/10/23
      */
     List<TypeDTO> listTypeByType(@Param("type") Integer type);
+
+
 }

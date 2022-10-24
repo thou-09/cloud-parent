@@ -1,10 +1,14 @@
 package com.itany.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.itany.constants.AppConsts;
+import com.itany.entity.Annex;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * ServerInfoDTO.
@@ -37,6 +41,7 @@ public class ServerInfoDTO implements Serializable {
 
     private Integer commpanytype;
 
+    @JSONField(format = AppConsts.FORMAT_DATE)
     private Date createdate;
 
     private Integer flag;
@@ -44,4 +49,10 @@ public class ServerInfoDTO implements Serializable {
     private BigDecimal price;
 
     private String memberlevel;
+
+    private List<TypeDTO> typeDTOList;
+
+    private List<AreaDTO> areaDTOList;
+
+    private List<Annex> annexList;
 }

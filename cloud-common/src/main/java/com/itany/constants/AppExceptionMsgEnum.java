@@ -19,6 +19,9 @@ public enum AppExceptionMsgEnum {
     SERVER_COMPANY_NOT_EXIST("B0003", "服务商不存在"),
     EXAMINE_NOT_EXIST("B0004", "审核数据不存在"),
     DATA_HAS_EXAMINED("B0005", "数据已被审核"),
+    SERVERINFO_NOT_EXIST("B0006", "服务数据不存在"),
+    USER_HAS_BINDED_OTHER("B0007", "用户已绑定其他服务商"),
+    USER_HAS_BINDED_OWN("B0007", "用户已被您绑定"),
     ;
 
     /**

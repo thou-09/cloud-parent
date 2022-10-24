@@ -3,6 +3,7 @@ package com.itany.controllers;
 import com.itany.dto.AreaDTO;
 import com.itany.service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +22,7 @@ public class AreaController {
     @Autowired
     private AreaService areaService;
 
-    @RequestMapping("/list")
+    @PostMapping("/list")
     public List<AreaDTO> listAreas() {
         return areaService.listAll();
     }

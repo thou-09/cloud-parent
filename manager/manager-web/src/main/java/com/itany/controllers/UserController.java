@@ -49,4 +49,10 @@ public class UserController {
     public ResponseResult<UserDTO> findUser(@PathVariable Integer id) {
         return ResponseResult.success(userService.getUserById(id));
     }
+
+    @PostMapping("/addsub")
+    public ResponseResult<Object> addSub(UserInput in) {
+        userService.addSub(in);
+        return ResponseResult.success();
+    }
 }

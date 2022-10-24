@@ -30,9 +30,9 @@
                 left join t_server_commpany tsc on tsi.commpanyid = tsc.id
                 left join t_user tu on tsi.userid = tu.id
                 left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                        and CURDATE() &gt;= tmc.startdate and CURDATE() &lt;= tmc.enddate
                 left join t_member tm on tmc.memberid = tm.id
         <where>
-            and (tmc.startdate is null or now() &gt;= tmc.startdate) and (tmc.enddate is null or now() &lt;= tmc.enddate)
             <if test="null != servername and '' != servername">
                 tsi.servername = #{servername}
             </if>
@@ -42,8 +42,85 @@
         </where>
     </select>
 
+    <select id="getServerInfoById" resultMap="dto_map_2">
+        select
+                tsi.id tsi_id,
+                tsi.servername tsi_servername,
+                tsi.info tsi_info,
+                tsi.linkman tsi_linkman,
+                tsi.phone tsi_phone,
+                tsi.userid tsi_userid,
+                tsi.commpanyid tsi_commpanyid,
+                tsi.createdate tsi_createdate,
+                tsi.flag tsi_flag,
+                tsi.price tsi_price,
+                tsc.name tsc_name,
+                tsc.type tsc_type,
+                tm.level tm_level,
+                ta.id ta_id,
+                ta.path ta_path,
+                ta.filename ta_filename
+        from t_server_info tsi
+                left join t_server_commpany tsc on tsi.commpanyid = tsc.id
+                left join t_member_commpany tmc on tsc.id = tmc.commpanyid
+                        and CURDATE() &gt;= tmc.startdate and CURDATE() &lt;= tmc.enddate
+                left join t_member tm on tmc.memberid = tm.id
+                left join t_annex ta on ta.keyid = tsi.id and ta.tabletype = 3
+        where tsi.id = #{id}
+    </select>
+
+    <update id="updateServerInfoById">
+        update t_server_info
+        <set>
+            <if test="null != flag">
+                flag = #{flag},
+            </if>
+            <if test="null != servername and '' != servername">
+                servername = #{servername},
+            </if>
+            <if test="null != info and '' != info">
+                info = #{info},
+            </if>
+            <if test="null != linkman and '' != linkman">
+                linkman = #{linkman},
+            </if>
+            <if test="null != phone and '' != phone">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteServerTypeByServerid">
+        delete
+        from t_server_type
+        where serverid = #{serverid}
+    </delete>
+
+    <delete id="deleteServerAreaByServerid">
+        delete
+        from t_server_area
+        where serverid = #{serverid}
+    </delete>
+
+    <insert id="insertServerTypeBatch" parameterType="list">
+        insert into t_server_type (typeid, serverid)
+        values
+        <foreach collection="list" item="st" separator=",">
+            (#{st.typeid}, #{st.serverid})
+        </foreach>
+    </insert>
+
+    <insert id="insertServerAreaBatch" parameterType="list">
+        insert into t_server_area (serverid, areaid)
+        values
+        <foreach collection="list" item="sa" separator=",">
+            (#{sa.serverid}, #{sa.areaid})
+        </foreach>
+    </insert>
+
     <resultMap id="dto_map" type="serverInfoDTO">
-        <id property="id" column="tsi-id"/>
+        <id property="id" column="tsi_id"/>
         <result property="servername" column="tsi_servername"/>
         <result property="info" column="tsi_info"/>
         <result property="linkman" column="tsi_linkman"/>
@@ -58,4 +135,42 @@
         <result property="username" column="tu_name"/>
         <result property="memberlevel" column="tm_level"/>
     </resultMap>
+
+    <resultMap id="dto_map_2" type="serverInfoDTO">
+        <id property="id" column="tsi_id"/>
+        <result property="servername" column="tsi_servername"/>
+        <result property="info" column="tsi_info"/>
+        <result property="linkman" column="tsi_linkman"/>
+        <result property="phone" column="tsi_phone"/>
+        <result property="userid" column="tsi_userid"/>
+        <result property="commpanyid" column="tsi_commpanyid"/>
+        <result property="createdate" column="tsi_createdate"/>
+        <result property="flag" column="tsi_flag"/>
+        <result property="price" column="tsi_price"/>
+        <result property="commpanyname" column="tsc_name"/>
+        <result property="commpanytype" column="tsc_type"/>
+        <result property="username" column="tu_name"/>
+        <result property="memberlevel" column="tm_level"/>
+        <collection property="typeDTOList" ofType="typeDTO" select="selectTypesByServerInfoId" column="tsi_id"/>
+        <collection property="areaDTOList" ofType="areaDTO" select="selectAreasByServerInfoId" column="tsi_id"/>
+        <collection property="annexList" ofType="annex">
+            <id property="id" column="ta_id"/>
+            <result property="path" column="ta_path"/>
+            <result property="filename" column="ta_filename"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectTypesByServerInfoId" resultType="typeDTO">
+        select tt.*
+        from t_type tt
+                left join t_server_type tst on tt.id = tst.typeid
+        where tst.serverid = #{id}
+    </select>
+
+    <select id="selectAreasByServerInfoId" resultType="areaDTO">
+        select ta.*
+        from t_area ta
+                left join t_server_area tsa on ta.id = tsa.areaid
+        where tsa.serverid = #{id}
+    </select>
 </mapper>

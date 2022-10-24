@@ -7,6 +7,7 @@
         <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/js/_my.js}"></script>
         <script type="text/javascript">
             $(function () {
                 $('#userlist').datagrid({
@@ -96,7 +97,7 @@
                         // console.log(data)
                         if (data.status === '00000') {
                             let info = data.data;
-                            // $('#dg-img').attr('src', info.heading);
+                            $('#dg-img').attr('src', fileServer + info.headimg);
                             $('#dg-name').textbox('setValue', info.name);
                             $('#dg-nickname').textbox('setValue', info.nickname);
                             $('#dg-phone').textbox('setValue', info.phone);
@@ -163,7 +164,7 @@
         <div id="dg">
             <div align="center" style="margin-top: 30px">
                 <div style="margin-bottom:20px">
-                    <img id="dg-img" src="./images/tx.jpg" alt="" style="width: 150px; height:150px;"/>
+                    <img id="dg-img" src="" alt="头像" style="width: 150px; height:150px;"/>
                 </div>
                 <div style="margin-bottom:20px">
                     <input id="dg-name" class="easyui-textbox" style="width:50%" data-options="label:'姓名:'" readonly="true"

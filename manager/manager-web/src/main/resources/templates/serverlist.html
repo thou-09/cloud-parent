@@ -7,8 +7,31 @@
         <link rel="stylesheet" type="text/css" th:href="@{/manager/easyui/themes/icon.css}">
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
+        <script type="text/javascript" th:src="@{/manager/js/_my.js}"></script>
         <script type="text/javascript">
+            let lifetypes = '';
+            let commercetypes = '';
+
             $(function () {
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/types/list/1',
+                    data : {},
+                    dataType : 'json',
+                    success : (data) => {
+                        lifetypes = data;
+                    }
+                })
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/types/list/2',
+                    data : {},
+                    dataType : 'json',
+                    success : (data) => {
+                        commercetypes = data;
+                    }
+                })
+
                 $('#serverlist').datagrid({
                     title: '平台服务列表',
                     iconCls: 'icon-save',
@@ -71,16 +94,11 @@
                     buttons: [{
                         text: '提交',
                         iconCls: 'icon-ok',
-                        handler: function () {
-                            //多选中下拉获取
-                            console.log($("#servertype").combobox("getValues"));
-                            console.log($("#serverarea").combobox("getValues"));
-                        }
+                        handler: modify,
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
-                            ;
+                            $('#editdg').dialog('close');
                         }
                     }]
                 });
@@ -99,7 +117,7 @@
                     width: 350,
                     label: "服务范围",
                     valueField: 'id',
-                    textField: 'text'
+                    textField: 'name'
                 });
 
                 $("#serverarea").combobox({
@@ -113,19 +131,168 @@
 
             // 查询弹出方法
             function showDg() {
-                $('#dg').dialog("open");
+                let row = $('#serverlist').datagrid('getSelected')
+                if (null != row) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/servers/server/' + row.id,
+                        data : {},
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data)
+                            if (data.status === '00000') {
+                                let info = data.data;
+                                $('#dg-servername').textbox('setValue', info.servername);
+                                $('#dg-linkman').textbox('setValue', info.linkman);
+                                $('#dg-phone').textbox('setValue', info.phone);
+                                $('#dg-commpanyname').textbox('setValue', info.commpanyname);
+                                $('#dg-commpanytype').textbox('setValue', info.commpanytype === 1 ? '生活' : '商务');
+                                $('#dg-memberlevel').textbox('setValue', info.memberlevel);
+                                let servertype = '';
+                                if (info.typeDTOList != null) {
+                                    for (let i = 0; i < info.typeDTOList.length; i++) {
+                                        servertype += info.typeDTOList[i].name + ','
+                                    }
+                                }
+                                $('#dg-servertype').textbox('setValue', servertype.substring(0, servertype.length - 1));
+                                let serverarea = '';
+                                if (info.areaDTOList != null) {
+                                    for (let i = 0; i < info.areaDTOList.length; i++) {
+                                        serverarea += info.areaDTOList[i].name + ','
+                                    }
+                                }
+                                $('#dg-serverarea').textbox('setValue', serverarea.substring(0, serverarea.length - 1));
+                                $('#dg-createdate').textbox('setValue', info.createdate);
+                                $('#dg-flag').textbox('setValue', info.flag === 1 ? '上线' : '下线');
+                                $('#dg-info').val(info.info);
+
+                                $('#dg-imgtab').empty();
+                                for (let annex of info.annexList) {
+                                    $('#dg-imgtab').append("<img src='" + fileServer + annex.path + "' alt='" + annex.filename + "' style='width: 100px;height: 100px; margin: 0 5px'>");
+                                }
+
+                                $('#dg').dialog('open');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
             }
 
             // 打开修改服务界面
             function openeditdg() {
-                $("#servertype").combobox("select", 1);
-                $("#servertype").combobox("select", 2);
-                $("#servertype").combobox("select", 3);
+                let row = $('#serverlist').datagrid('getSelected');
 
-                $("#serverarea").combobox("select", 1);
-                $("#serverarea").combobox("select", 2);
-                $("#serverarea").combobox("select", 3);
+                if (row == null) {
+                    $.messager.alert('错误', '请选择一条数据');
+                    return;
+                }
+
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/servers/server/' + row.id,
+                    data : {},
+                    dataType : 'json',
+                    success : (data) => {
+                        // console.log(data)
+                        if (data.status === '00000') {
+                            let info = data.data;
+
+                            if (info.commpanytype === 1) {
+                                $("#servertype").combobox({
+                                    data: lifetypes
+                                })
+                            }
+                            if (info.commpanytype === 2) {
+                                $("#servertype").combobox({
+                                    data: commercetypes
+                                })
+                            }
+
+                            if (info.typeDTOList != null) {
+                                for (let i = 0; i < info.typeDTOList.length; i++) {
+                                    $("#servertype").combobox("select", info.typeDTOList[i].id);
+                                }
+                            }
+
+                            if (info.areaDTOList != null) {
+                                for (let i = 0; i < info.areaDTOList.length; i++) {
+                                    $("#serverarea").combobox("select", info.areaDTOList[i].id);
+                                }
+                            }
+
+                            $('#editdg-id').val(info.id);
+                            $('#editdg-userid').val(info.userid);
+                            $('#editdg-servername').textbox('setValue', info.servername);
+                            $('#editdg-linkman').textbox('setValue', info.linkman);
+                            $('#editdg-phone').textbox('setValue', info.phone);
+                            $('#editdg-commpanyname').textbox('setValue', info.commpanyname);
+                            $('#editdg-commpanytype').textbox('setValue', info.commpanytype === 1 ? '生活' : '商务');
+                            $('#editdg-memberlevel').textbox('setValue', info.memberlevel);
+                            $('#editdg-info').val(info.info);
+
+                            $('#editdg-imgbox').empty();
+                            $('#editdg-upload').val('');
+
+                            $('#editdg').dialog('open');
+                        } else {
+                            $.messager.alert('错误', data.message);
+                        }
+                    }
+                })
+
                 $('#editdg').dialog("open");
+            }
+
+            // 上线下线
+            function changeFlag(flag) {
+                let row = $('#serverlist').datagrid('getSelected');
+                if (row !== null && flag !== row.flag) {
+                    $.ajax({
+                        type : 'post',
+                        url : '/manager/servers/modify/flag',
+                        data : {
+                            id: row.id,
+                            flag: flag,
+                            servername: row.servername,
+                            userid: row.userid
+                        },
+                        dataType : 'json',
+                        success : (data) => {
+                            // console.log(data)
+                            if (data.status === '00000') {
+                                $('#serverlist').datagrid('reload');
+                            } else {
+                                $.messager.alert('错误', data.message);
+                            }
+                        }
+                    })
+                }
+            }
+
+            function modify() {
+                let data = new FormData($('#edit-form')[0]);
+                let files = $('#editdg-upload')[0].files;
+                for (let i = 0; i < files.length; i++) {
+                    data.append('files', files[i]);
+                }
+                $.ajax({
+                    type : 'post',
+                    url : '/manager/servers/modify',
+                    contentType : false,
+                    processData: false,
+                    data : data,
+                    dataType : 'json',
+                    success : (data) => {
+                        if (data.status === '00000') {
+                            $("#editdg").dialog('close');
+                            $('#serverlist').datagrid('reload');
+                        } else {
+                            $.messager.alert('错误', data.message);
+                        }
+                    }
+                })
             }
         </script>
     </head>
@@ -139,101 +306,122 @@
             </select>
             <a id="submit_search">搜索</a>
             <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="openeditdg();">修改</a>
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'">下线</a>
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'">上线</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" href="javascript:changeFlag(0)">下线</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" href="javascript:changeFlag(1)">上线</a>
         </div>
         <table id="serverlist"></table>
         <!-- 服务详情界面 -->
         <div id="dg">
             <div align="center" style="margin-top: 30px">
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'" readonly="true"
-                           value="应急贷款服务"/>
+                    <input id="dg-servername" class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'联系人:'" readonly="true"
-                           value="老张"/>
+                    <input id="dg-linkman" class="easyui-textbox" style="width:50%" data-options="label:'联系人:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'" readonly="true"
-                           value="123456"/>
+                    <input id="dg-phone" class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'" readonly="true"
-                           value="康华贷款公司"/>
+                    <input id="dg-commpanyname" class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly="true"
-                           value="商务"/>
+                    <input id="dg-commpanytype" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'" readonly="true"
-                           value="VIP2"/>
+                    <input id="dg-memberlevel" class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务范围:'" readonly="true"
-                           value="应急贷款,期货交易,证券交易"/>
+                    <input id="dg-servertype" class="easyui-textbox" style="width:50%;" data-options="label:'服务范围:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务地区:'" readonly="true"
-                           value="鼓楼区,玄武区,秦淮区"/>
+                    <input id="dg-serverarea" class="easyui-textbox" style="width:50%;" data-options="label:'服务地区:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'发布时间:'" readonly="true"
-                           value="2021-1-1"/>
+                    <input id="dg-createdate" class="easyui-textbox" style="width:50%;" data-options="label:'发布时间:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'状态:'" readonly="true"
-                           value="上线"/>
+                    <input id="dg-flag" class="easyui-textbox" style="width:50%;" data-options="label:'状态:'" readonly="true"
+                           value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                <textarea cols="80" rows="5" readonly="true" style="border: 0px;">
-这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介这是服务简介
+                <textarea id="dg-info" cols="80" rows="5" readonly="true" style="border: 0px;">
+                    文本
                 </textarea>
                 </div>
-                <div class="imgtab">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
-                    <img th:src="@{/manager/images/tx.jpg}" src="" alt="" style="width: 100px;height: 100px;">
+                <div id="dg-imgtab" class="imgtab">
                 </div>
             </div>
         </div>
         <!-- 服务修改界面 -->
         <div id="editdg">
             <div align="center" style="margin-top: 30px">
-                <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'"/>
-                </div>
-                <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'联系人:'"/>
-                </div>
-                <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'"/>
-                </div>
-                <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'"/>
-                </div>
-                <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'"/>
-                </div>
-                <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'"/>
-                </div>
-                <div style="margin-bottom:20px">
-                    <select id="servertype" multiple="multiple"></select>
-                </div>
-                <div style="margin-bottom:20px">
-                    <select id="serverarea" multiple="multiple"></select>
-                </div>
-                <div style="margin-bottom:20px">
-                    <textarea cols="80" rows="5"></textarea>
-                </div>
-                <div style="margin-bottom:20px">
-                    <input type="file" multiple="multiple"/>
+                <form id="edit-form">
+                    <input type="hidden" id="editdg-id" name="id">
+                    <input type="hidden" id="editdg-userid" name="userid">
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-servername" name="servername" class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'"/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-linkman" name="linkman" class="easyui-textbox" style="width:50%" data-options="label:'联系人:'"/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-phone" name="phone" class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'"/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-commpanyname" class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'" readonly/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-commpanytype" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <input id="editdg-memberlevel" class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'" readonly/>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <select id="servertype" name="servertypeids" multiple="multiple"></select>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <select id="serverarea" name="serverareaids" multiple="multiple"></select>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        <textarea id="editdg-info" name="info" cols="80" rows="5"></textarea>
+                    </div>
+                    <div style="margin-bottom:20px">
+                        服务图片:<input id="editdg-upload" type="file" accept="image/*" multiple="multiple"/>
+                    </div>
+                </form>
+                <div>
+                    <div id="editdg-imgbox" style="margin-bottom:20px; display: inline-block"></div>
                 </div>
             </div>
         </div>
     </body>
 </html>
+<!-- 处理文件上传并预览 -->
+<script>
+    $('#editdg-upload').change((e) => {
+        $('#editdg-imgbox').empty();
+        let files = e.target.files;
+        if (files && files.length > 0) {
+            for (let i = 0; i < files.length; i++) {
+                let url = window.URL || window.webkitURL;
+                let imgurl = url.createObjectURL(files[i]);
+                let html = `
+                    <div style="display: inline-block">
+                        <img style="width: 100px; height: 100px; " src="${imgurl}" alt="">
+                    </div>
+                `;
+                $('#editdg-imgbox').append(html);
+            }
+        }
+    })
+</script>

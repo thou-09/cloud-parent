@@ -46,6 +46,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUserById(UserInput in) {
+        Optional.ofNullable(userMapper.getUserById(in.getId()))
+                .orElseThrow(() -> new AppException(AppExceptionMsgEnum.USER_NOT_EXIST));
         userMapper.updateUserById(in);
     }
 
@@ -54,5 +56,24 @@ public class UserServiceImpl implements UserService {
     public UserDTO getUserById(Integer id) {
         return Optional.ofNullable(userMapper.getUserById(id))
                 .orElseThrow(() -> new AppException(AppExceptionMsgEnum.USER_NOT_EXIST));
+    }
+
+    @Override
+    public void addSub(UserInput in) {
+        UserDTO dto = Optional.ofNullable(userMapper.getUserByPhone(in.getPhone()))
+                .orElseThrow(() -> new AppException(AppExceptionMsgEnum.USER_NOT_EXIST));
+        Integer dtoCompanyid = dto.getCompanyid();
+        if (null != dtoCompanyid) {
+            if (dtoCompanyid.equals(in.getCompanyid())) {
+                throw new AppException(AppExceptionMsgEnum.USER_HAS_BINDED_OWN);
+            } else {
+                throw new AppException(AppExceptionMsgEnum.USER_HAS_BINDED_OTHER);
+            }
+        }
+
+        UserInput userInput = new UserInput();
+        userInput.setCompanyid(in.getCompanyid());
+        userInput.setId(dto.getId());
+        userMapper.updateUserById(userInput);
     }
 }

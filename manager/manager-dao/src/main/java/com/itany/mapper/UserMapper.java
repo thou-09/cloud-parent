@@ -1,6 +1,5 @@
 package com.itany.mapper;
 
-import com.itany.dto.ServerCommpanyDTO;
 import com.itany.dto.UserDTO;
 import com.itany.input.UserInput;
 import org.apache.ibatis.annotations.Param;
@@ -43,4 +42,14 @@ public interface UserMapper {
      * @date 2022/10/19
      */
     UserDTO getUserById(@Param("id") Integer id);
+
+    /**
+     * 根据 phone 查询 User
+     *
+     * @param phone -
+     * @return com.itany.dto.UserDTO
+     * @author Thou
+     * @date 2022/10/24
+     */
+    UserDTO getUserByPhone(@Param("phone") String phone);
 }

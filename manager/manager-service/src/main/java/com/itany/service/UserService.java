@@ -41,4 +41,13 @@ public interface UserService {
      * @date 2022/10/19
      */
     UserDTO getUserById(Integer id);
+
+    /**
+     * 根据 phone 绑定子账号
+     *
+     * @param in -
+     * @author Thou
+     * @date 2022/10/24
+     */
+    void addSub(UserInput in);
 }

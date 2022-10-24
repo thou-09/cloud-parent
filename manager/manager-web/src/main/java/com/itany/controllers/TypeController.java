@@ -4,6 +4,7 @@ import com.itany.dto.TypeDTO;
 import com.itany.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +23,7 @@ public class TypeController {
     @Autowired
     public TypeService typeService;
 
-    @RequestMapping("/list/{type}")
+    @PostMapping("/list/{type}")
     public List<TypeDTO> listTypesByType(@PathVariable Integer type) {
         return typeService.listTypeByType(type);
     }

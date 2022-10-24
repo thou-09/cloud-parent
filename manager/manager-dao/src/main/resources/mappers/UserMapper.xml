@@ -90,6 +90,12 @@
         where tu.id = #{id}
     </select>
 
+    <select id="getUserByPhone" resultType="com.itany.dto.UserDTO">
+        select *
+        from t_user
+        where phone = #{phone}
+    </select>
+
     <update id="updateUserById">
         update t_user
         <set>
@@ -115,7 +121,7 @@
         <result property="phone" column="tu_phone"/>
         <result property="wechat" column="tu_wechat"/>
         <result property="qq" column="tu_qq"/>
-        <result property="heading" column="tu_heading"/>
+        <result property="headimg" column="tu_headimg"/>
         <result property="sex" column="tu_sex"/>
         <result property="companyid" column="tu_companyid"/>
         <result property="flag" column="tu_flag"/>
