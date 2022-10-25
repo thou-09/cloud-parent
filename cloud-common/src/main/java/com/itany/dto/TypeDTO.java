@@ -22,4 +22,6 @@ public class TypeDTO implements Serializable {
     private Integer parentid;
 
     private Integer type;
+
+    private String parentname;
 }

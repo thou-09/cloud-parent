@@ -3,6 +3,36 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.itany.mapper.TypeMapper">
+    <insert id="insertType">
+        insert into t_type (name, parentid, type)
+        values (#{name}, #{parentid}, #{type});
+    </insert>
+
+    <update id="updateTypeById">
+        update t_type
+        <set>
+            <if test="null != name and '' != name">
+                name = #{name}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTypeById">
+        delete
+        from t_type
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTypeBatch">
+        delete
+        from t_type
+        where id in (
+                <foreach collection="list" item="id" separator=",">
+                    #{id}
+                </foreach>
+            )
+    </delete>
 
     <select id="listTypesByIds" parameterType="list" resultType="com.itany.dto.TypeDTO">
         select *
@@ -14,9 +44,53 @@
             )
     </select>
 
-    <select id="listTypeByType" resultType="com.itany.dto.TypeDTO">
+    <select id="listAllByParams" resultType="com.itany.dto.TypeDTO">
+        <if test="null == parentid">
+            select *
+            from t_type
+            <where>
+                    and parentid is null
+                <if test="null != type">
+                    and type = #{type}
+                </if>
+            </where>
+        </if>
+        <if test="null != parentid">
+            select tt1.*, tt2.name as parentname
+            from t_type tt1
+                    left join t_type tt2 on tt1.parentid = tt2.id
+            <where>
+                <if test="-1 == parentid">
+                    and tt1.parentid is not null
+                </if>
+                <if test="-1 != parentid">
+                    and tt1.parentid = #{parentid}
+                </if>
+                <if test="null != type">
+                    and tt1.type = #{type}
+                </if>
+            </where>
+        </if>
+    </select>
+
+    <select id="getTypeById" resultType="com.itany.dto.TypeDTO">
         select *
         from t_type
-        where type = #{type} and parentid is not null
+        where id = #{id}
+    </select>
+
+    <select id="selectRelation" resultType="integer">
+        <if test="null == parentid">
+            select tst.id
+            from t_type tt
+                    left join t_server_type tst on tt.id = tst.typeid
+            where tt.parentid = #{id}
+        </if>
+        <if test="null != parentid">
+            select tst.id
+            from t_type tt
+                    left join t_server_type tst on tt.id = tst.typeid
+            where tt.id = #{id}
+        </if>
     </select>
 </mapper>

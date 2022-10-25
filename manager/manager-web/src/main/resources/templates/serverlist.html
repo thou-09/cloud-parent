@@ -14,21 +14,21 @@
 
             $(function () {
                 $.ajax({
-                    type : 'post',
-                    url : '/manager/types/list/1',
-                    data : {},
-                    dataType : 'json',
-                    success : (data) => {
-                        lifetypes = data;
+                    type: 'post',
+                    url: '/manager/types/list?type=1&parentid=-1',
+                    data: {},
+                    dataType: 'json',
+                    success: (data) => {
+                        lifetypes = data.rows;
                     }
                 })
                 $.ajax({
-                    type : 'post',
-                    url : '/manager/types/list/2',
-                    data : {},
-                    dataType : 'json',
-                    success : (data) => {
-                        commercetypes = data;
+                    type: 'post',
+                    url: '/manager/types/list?type=2&parentid=-1',
+                    data: {},
+                    dataType: 'json',
+                    success: (data) => {
+                        commercetypes = data.rows;
                     }
                 })
 
@@ -51,7 +51,15 @@
                                     return val === 1 ? '生活' : '商务';
                                 }
                             },
-                            {field: 'memberlevel', title: '服务商等级', width: 100, align: 'center'},
+                            {
+                                field: 'memberlevel',
+                                title: '服务商等级',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return val !== '' ? val : '-';
+                                }
+                            },
                             {field: 'username', title: '发布账户名', width: 100, align: 'center'},
                             {field: 'createdate', title: '发布日期', width: 100, align: 'center'},
                             {
@@ -134,11 +142,11 @@
                 let row = $('#serverlist').datagrid('getSelected')
                 if (null != row) {
                     $.ajax({
-                        type : 'post',
-                        url : '/manager/servers/server/' + row.id,
-                        data : {},
-                        dataType : 'json',
-                        success : (data) => {
+                        type: 'post',
+                        url: '/manager/servers/server/' + row.id,
+                        data: {},
+                        dataType: 'json',
+                        success: (data) => {
                             // console.log(data)
                             if (data.status === '00000') {
                                 let info = data.data;
@@ -147,7 +155,7 @@
                                 $('#dg-phone').textbox('setValue', info.phone);
                                 $('#dg-commpanyname').textbox('setValue', info.commpanyname);
                                 $('#dg-commpanytype').textbox('setValue', info.commpanytype === 1 ? '生活' : '商务');
-                                $('#dg-memberlevel').textbox('setValue', info.memberlevel);
+                                $('#dg-memberlevel').textbox('setValue', info.memberlevel === '' ? '-' : info.memberlevel);
                                 let servertype = '';
                                 if (info.typeDTOList != null) {
                                     for (let i = 0; i < info.typeDTOList.length; i++) {
@@ -190,11 +198,11 @@
                 }
 
                 $.ajax({
-                    type : 'post',
-                    url : '/manager/servers/server/' + row.id,
-                    data : {},
-                    dataType : 'json',
-                    success : (data) => {
+                    type: 'post',
+                    url: '/manager/servers/server/' + row.id,
+                    data: {},
+                    dataType: 'json',
+                    success: (data) => {
                         // console.log(data)
                         if (data.status === '00000') {
                             let info = data.data;
@@ -250,16 +258,16 @@
                 let row = $('#serverlist').datagrid('getSelected');
                 if (row !== null && flag !== row.flag) {
                     $.ajax({
-                        type : 'post',
-                        url : '/manager/servers/modify/flag',
-                        data : {
+                        type: 'post',
+                        url: '/manager/servers/modify/flag',
+                        data: {
                             id: row.id,
                             flag: flag,
                             servername: row.servername,
                             userid: row.userid
                         },
-                        dataType : 'json',
-                        success : (data) => {
+                        dataType: 'json',
+                        success: (data) => {
                             // console.log(data)
                             if (data.status === '00000') {
                                 $('#serverlist').datagrid('reload');
@@ -278,13 +286,13 @@
                     data.append('files', files[i]);
                 }
                 $.ajax({
-                    type : 'post',
-                    url : '/manager/servers/modify',
-                    contentType : false,
+                    type: 'post',
+                    url: '/manager/servers/modify',
+                    contentType: false,
                     processData: false,
-                    data : data,
-                    dataType : 'json',
-                    success : (data) => {
+                    data: data,
+                    dataType: 'json',
+                    success: (data) => {
                         if (data.status === '00000') {
                             $("#editdg").dialog('close');
                             $('#serverlist').datagrid('reload');
@@ -314,43 +322,53 @@
         <div id="dg">
             <div align="center" style="margin-top: 30px">
                 <div style="margin-bottom:20px">
-                    <input id="dg-servername" class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'" readonly="true"
+                    <input id="dg-servername" class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-linkman" class="easyui-textbox" style="width:50%" data-options="label:'联系人:'" readonly="true"
+                    <input id="dg-linkman" class="easyui-textbox" style="width:50%" data-options="label:'联系人:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-phone" class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'" readonly="true"
+                    <input id="dg-phone" class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-commpanyname" class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'" readonly="true"
+                    <input id="dg-commpanyname" class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-commpanytype" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly="true"
+                    <input id="dg-commpanytype" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-memberlevel" class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'" readonly="true"
+                    <input id="dg-memberlevel" class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-servertype" class="easyui-textbox" style="width:50%;" data-options="label:'服务范围:'" readonly="true"
+                    <input id="dg-servertype" class="easyui-textbox" style="width:50%;" data-options="label:'服务范围:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-serverarea" class="easyui-textbox" style="width:50%;" data-options="label:'服务地区:'" readonly="true"
+                    <input id="dg-serverarea" class="easyui-textbox" style="width:50%;" data-options="label:'服务地区:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-createdate" class="easyui-textbox" style="width:50%;" data-options="label:'发布时间:'" readonly="true"
+                    <input id="dg-createdate" class="easyui-textbox" style="width:50%;" data-options="label:'发布时间:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <input id="dg-flag" class="easyui-textbox" style="width:50%;" data-options="label:'状态:'" readonly="true"
+                    <input id="dg-flag" class="easyui-textbox" style="width:50%;" data-options="label:'状态:'"
+                           readonly="true"
                            value=""/>
                 </div>
                 <div style="margin-bottom:20px">
@@ -369,22 +387,28 @@
                     <input type="hidden" id="editdg-id" name="id">
                     <input type="hidden" id="editdg-userid" name="userid">
                     <div style="margin-bottom:20px">
-                        <input id="editdg-servername" name="servername" class="easyui-textbox" style="width:50%" data-options="label:'服务名称:'"/>
+                        <input id="editdg-servername" name="servername" class="easyui-textbox" style="width:50%"
+                               data-options="label:'服务名称:'"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-linkman" name="linkman" class="easyui-textbox" style="width:50%" data-options="label:'联系人:'"/>
+                        <input id="editdg-linkman" name="linkman" class="easyui-textbox" style="width:50%"
+                               data-options="label:'联系人:'"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-phone" name="phone" class="easyui-textbox" style="width:50%" data-options="label:'联系电话:'"/>
+                        <input id="editdg-phone" name="phone" class="easyui-textbox" style="width:50%"
+                               data-options="label:'联系电话:'"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-commpanyname" class="easyui-textbox" style="width:50%;" data-options="label:'所属服务商:'" readonly/>
+                        <input id="editdg-commpanyname" class="easyui-textbox" style="width:50%;"
+                               data-options="label:'所属服务商:'" readonly/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-commpanytype" class="easyui-textbox" style="width:50%;" data-options="label:'服务商类型:'" readonly/>
+                        <input id="editdg-commpanytype" class="easyui-textbox" style="width:50%;"
+                               data-options="label:'服务商类型:'" readonly/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input id="editdg-memberlevel" class="easyui-textbox" style="width:50%;" data-options="label:'服务商等级:'" readonly/>
+                        <input id="editdg-memberlevel" class="easyui-textbox" style="width:50%;"
+                               data-options="label:'服务商等级:'" readonly/>
                     </div>
                     <div style="margin-bottom:20px">
                         <select id="servertype" name="servertypeids" multiple="multiple"></select>

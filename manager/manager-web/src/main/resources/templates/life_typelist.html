@@ -8,24 +8,31 @@
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
         <script type="text/javascript">
+            // 当前级别的 parentid
+            let thisParentid = null;
+            // 上一级的 parentid
+            let thatParentid = null;
+            // 级别
+            let typelevel = 1;
+
             $(function () {
                 $('#typelist').datagrid({
                     title: '生活服务类型列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 10,
-                        "rows": [
-                            {"id": 1, "name": "家政服务", "parentid": "顶级类型"},
-                            {"id": 1, "name": "维修服务", "parentid": "顶级类型"},
-                            {"id": 1, "name": "装修服务", "parentid": "顶级类型"},
-                        ]
-                    },
+                    url: '/manager/types/list?type=1',
                     columns: [
                         [
                             {field: 'id', title: '主键', width: 100, align: 'center'},
                             {field: 'name', title: '类型名称', width: 100, align: 'center'},
-                            {field: 'parentid', title: '父类型名称', width: 100, align: 'center'}
-
+                            {
+                                field: 'parentname',
+                                title: '父类型名称',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return val === '' ? '顶级类型' : val;
+                                }
+                            }
                         ]
                     ],
                     toolbar: "#tooldiv",
@@ -45,35 +52,220 @@
                         text: '提交',
                         iconCls: 'icon-ok',
                         handler: function () {
-                            alert('ok');
+                            let row = $('#typelist').datagrid('getSelected');
+                            if (row == null) {
+                                $.messager.alert('错误', '请选择一条数据');
+                                return;
+                            }
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/types/modify',
+                                data : {
+                                    id: row.id,
+                                    name: $('#dg-name').textbox('getValue')
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    // console.log(data);
+                                    if (data.status === '00000') {
+                                        $('#dg-name').textbox('setValue', '');
+                                        $('#dg').dialog('close');
+                                        $('#typelist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message)
+                                    }
+                                }
+                            })
                         }
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
+                            $('#dg-name').textbox('setValue', '');
+                            $('#dg').dialog('close');
+                        }
+                    }]
+                });
+
+                // 初始化添加窗口
+                $('#dg2').dialog({
+                    title: '类型添加',
+                    width: 300,
+                    height: 200,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '提交',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/types/add',
+                                data : {
+                                    name: $('#dg2-name').textbox('getValue'),
+                                    parentid: thisParentid,
+                                    type: 1
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    // console.log(data);
+                                    if (data.status === '00000') {
+                                        $('#dg2-name').textbox('setValue', '');
+                                        $('#dg2').dialog('close');
+                                        $('#typelist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message)
+                                    }
+                                }
+                            })
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            $('#dg2-name').textbox('setValue', '');
+                            $('#dg2').dialog('close');
+                        }
+                    }]
+                });
+
+                // 初始化删除窗口
+                $('#dg3').dialog({
+                    title: '类型删除',
+                    width: 300,
+                    height: 150,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '确认删除',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            let row = $('#typelist').datagrid('getSelected');
+                            if (row == null) {
+                                $.messager.alert('错误', '请选择一条数据')
+                                return;
+                            }
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/types/delete',
+                                data : {
+                                    id: row.id,
+                                    parentid: row.parentid
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    if (data.status === '00000') {
+                                        $('#dg3').dialog('close');
+                                        $('#typelist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message)
+                                    }
+                                }
+                            })
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            $('#dg3').dialog('close');
                         }
                     }]
                 });
             });
 
             function opendg() {
+                let row = $('#typelist').datagrid('getSelected');
+                if (row == null) {
+                    $.messager.alert('错误', '请选择一条数据');
+                    return;
+                }
                 $('#dg').dialog("open");
+            }
+
+            function opendg2() {
+                $('#dg2').dialog("open");
+            }
+
+            // 上一级
+            function toUp() {
+                if (typelevel === 1) {
+                    $.messager.alert('错误', '当前为顶级类型，没有上一级')
+                    return;
+                }
+                if (thatParentid == null) {
+                    $('#typelist').datagrid({
+                        url: '/manager/types/list?type=1'
+                    });
+                } else {
+                    $('#typelist').datagrid({
+                        url: '/manager/types/list?type=1&parentid=' + thatParentid
+                    });
+                }
+                typelevel--;
+                thisParentid = thatParentid;
+                thatParentid = null;
+            }
+
+            // 下一级
+            function toDown() {
+                let row = $('#typelist').datagrid('getSelected');
+                if (row == null) {
+                    $.messager.alert('错误', '请选择一条数据')
+                    return;
+                }
+
+                if (typelevel === 2) {
+                    $.messager.alert('错误', '当前为二级类型，没有下一级')
+                    return;
+                }
+
+                $('#typelist').datagrid({
+                    url: '/manager/types/list?type=1&parentid=' + row.id
+                });
+                typelevel++;
+                thisParentid = row.id;
+                thatParentid = row.parentid
+            }
+
+            // 删除
+            function opendg3() {
+                let row = $('#typelist').datagrid('getSelected');
+                if (row == null) {
+                    $.messager.alert('错误', '请选择一条数据')
+                    return;
+                }
+                $('#dg3').dialog("open");
             }
         </script>
     </head>
     <body>
         <div id="tooldiv">
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'">删除</a>
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="opendg();">添加</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" href="javascript:opendg3()">删除</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="opendg2();">添加</a>
             <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="opendg();">修改</a>
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'">下一级</a>
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'">上一级</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" href="javascript:toDown()">下一级</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" href="javascript:toUp()">上一级</a>
         </div>
         <table id="typelist"></table>
         <div id="dg">
             <div align="center" style="margin-top: 30px">
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:80%" data-options="label:'类型名称:'"/>
+                    <input id="dg-name" class="easyui-textbox" style="width:80%" data-options="label:'类型名称:'"/>
+                </div>
+            </div>
+        </div>
+        <div id="dg2">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <input id="dg2-name" class="easyui-textbox" style="width:80%" data-options="label:'类型名称:'"/>
+                </div>
+            </div>
+        </div>
+        <div id="dg3">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <div>是否确认删除当前类型，如果有子类型，同样删除？</div>
                 </div>
             </div>
         </div>

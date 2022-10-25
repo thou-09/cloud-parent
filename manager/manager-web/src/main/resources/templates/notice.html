@@ -12,57 +12,35 @@
                 $('#noticelist').datagrid({
                     title: '站内信列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 10,
-                        "rows": [
-                            {
-                                "title": "月嫂排名公司审核情况",
-                                "info": "恭喜审核通过",
-                                "manageruserid": "平台人员1",
-                                "userid": "张三",
-                                "createdate": "2022-1-1"
-                            },
-                            {
-                                "title": "月嫂排名公司审核情况",
-                                "info": "恭喜审核通过",
-                                "manageruserid": "平台人员1",
-                                "userid": "张三",
-                                "createdate": "2022-1-1"
-                            },
-                            {
-                                "title": "月嫂排名公司审核情况",
-                                "info": "恭喜审核通过",
-                                "manageruserid": "平台人员1",
-                                "userid": "张三",
-                                "createdate": "2022-1-1"
-                            },
-                            {
-                                "title": "月嫂排名公司审核情况",
-                                "info": "恭喜审核通过",
-                                "manageruserid": "平台人员1",
-                                "userid": "张三",
-                                "createdate": "2022-1-1"
-                            },
-                            {
-                                "title": "服务器升级",
-                                "info": "本次升级从2021-12-3到2021-12-4",
-                                "manageruserid": "平台人员1",
-                                "userid": "-",
-                                "createdate": "2022-1-1"
-                            }
-                        ]
-                    },
+                    url: '/manager/notices/list',
                     columns: [
                         [
                             {field: 'title', title: '标题', width: 200, align: 'center'},
                             {field: 'info', title: '内容', width: 300, align: 'center'},
-                            {field: 'manageruserid', title: '发布人员', width: 100, align: 'center'},
-                            {field: 'userid', title: '接收用户', width: 100, align: 'center'},
+                            {
+                                field: 'managerUserDTO.username',
+                                title: '发布人员',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.managerUserDTO != null ? row.managerUserDTO.username : '-';
+                                }
+                            },
+                            {
+                                field: 'userDTO.name',
+                                title: '接收用户',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.userDTO != null ? row.userDTO.name : '-';
+                                }
+                            },
                             {field: 'createdate', title: '发布日期', width: 100, align: 'center'}
                         ]
                     ],
                     toolbar: "#tooldiv",
                     pagination: true,
+                    pageList: [2, 4, 6, 8, 10],
                     singleSelect: true
                 });
 
@@ -79,37 +57,114 @@
                         text: '提交',
                         iconCls: 'icon-ok',
                         handler: function () {
-                            alert('ok');
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/notices/add',
+                                data : {
+                                    title: $('#dg-title').textbox('getValue'),
+                                    info: $('#dg-info').val()
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    if (data.status === '00000') {
+                                        $('#dg').dialog('close');
+                                        $('#noticelist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message)
+                                    }
+                                }
+                            })
                         }
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
+                            $('#dg').dialog('close');
                         }
                     }]
                 });
 
+                // 初始化删除窗口
+                $('#dg2').dialog({
+                    title: '删除通知',
+                    width: 500,
+                    height: 150,
+                    closed: true,
+                    cache: false,
+                    modal: true,
+                    iconCls: 'icon-save',
+                    buttons: [{
+                        text: '确认',
+                        iconCls: 'icon-ok',
+                        handler: function () {
+                            let row = $('#noticelist').datagrid('getSelected');
+                            if (row == null) {
+                                $.messager.alert('错误', '请选择一条数据');
+                                return;
+                            }
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/notices/delete',
+                                data : {
+                                    id: row.id
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    if (data.status === '00000') {
+                                        $('#dg2').dialog('close');
+                                        $('#noticelist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.status)
+                                    }
+                                }
+                            })
+                        }
+                    }, {
+                        text: '关闭',
+                        handler: function () {
+                            $('#dg2').dialog('close');
+                        }
+                    }]
+                });
             });
 
             // 打开新建通知界面
             function opendg() {
+                $('#dg-title').textbox('setValue', '');
+                $('#dg-info').val('');
                 $('#dg').dialog('open');
+            }
+
+            // 打开删除通知界面
+            function opendg2() {
+                let row = $('#noticelist').datagrid('getSelected');
+                if (row == null) {
+                    $.messager.alert('错误', '请选择一条数据');
+                    return;
+                }
+                $('#dg2').dialog('open');
             }
         </script>
     </head>
     <body>
         <div id="tooldiv">
-            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'">删除</a>
+            <a class="easyui-linkbutton" data-options="iconCls:'icon-remove'" onclick="opendg2()">删除</a>
             <a class="easyui-linkbutton" data-options="iconCls:'icon-add'" onclick="opendg();">新建</a>
         </div>
         <table id="noticelist"></table>
         <div id="dg">
             <div align="center" style="margin-top: 30px">
                 <div style="margin-bottom:20px">
-                    <input class="easyui-textbox" style="width:50%" data-options="label:'标题:'"/>
+                    <input id="dg-title" class="easyui-textbox" style="width:50%" data-options="label:'标题:'"/>
                 </div>
                 <div style="margin-bottom:20px">
-                    <textarea cols="50" rows="10"></textarea>
+                    <textarea id="dg-info" cols="50" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+        <div id="dg2">
+            <div align="center" style="margin-top: 30px">
+                <div style="margin-bottom:20px">
+                    <p>确认删除当前通知？</p>
                 </div>
             </div>
         </div>

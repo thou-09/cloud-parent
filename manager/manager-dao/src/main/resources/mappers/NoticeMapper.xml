@@ -10,4 +10,49 @@
         values
             (#{title}, #{info}, #{manageruserid}, #{userid}, #{flag}, #{createdate});
     </insert>
+
+    <update id="updateFlag">
+        update t_notice
+        set flag = #{flag}
+        where id = #{id}
+    </update>
+
+    <select id="listAll" resultMap="dto_map">
+        select
+                tn.id tn_id,
+                tn.title tn_title,
+                tn.info tn_info,
+                tn.flag tn_flag,
+                tn.createdate tn_createdate,
+                tu.id tu_id,
+                tu.name tu_name,
+                tmu.id tu_id,
+                tmu.username tmu_username
+        from t_notice tn
+                left join t_user tu on tn.userid = tu.id
+                left join t_manager_user tmu on tn.manageruserid = tmu.id
+        where tn.flag = 1
+    </select>
+
+    <select id="getNoticeById" resultType="com.itany.dto.NoticeDTO">
+        select *
+        from t_notice
+        where id = #{id}
+    </select>
+
+    <resultMap id="dto_map" type="noticeDTO">
+        <id property="id" column="tn_id"/>
+        <result property="title" column="tn_title"/>
+        <result property="info" column="tn_info"/>
+        <result property="flag" column="tn_flag"/>
+        <result property="createdate" column="tn_createdate"/>
+        <association property="userDTO" javaType="userDTO">
+            <id property="id" column="tu_id"/>
+            <result property="name" column="tu_name"/>
+        </association>
+        <association property="managerUserDTO" javaType="managerUserDTO">
+            <id property="id" column="tmu_id"/>
+            <result property="username" column="tmu_username"/>
+        </association>
+    </resultMap>
 </mapper>

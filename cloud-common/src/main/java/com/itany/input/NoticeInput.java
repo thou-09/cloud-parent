@@ -1,13 +1,12 @@
 package com.itany.input;
 
-import com.alibaba.fastjson.annotation.JSONField;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.itany.constants.AppConsts;
+import com.itany.validation.Delete;
+import com.itany.validation.Insert;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -23,10 +22,13 @@ public class NoticeInput extends BaseInput implements Serializable {
 
     private static final long serialVersionUID = 4707053865260301188L;
 
+    @NotNull(message = "id 不可为空", groups = {Delete.class})
     private Integer id;
 
+    @NotBlank(message = "标题不可为空", groups = {Insert.class})
     private String title;
 
+    @NotBlank(message = "内容不可为空", groups = {Insert.class})
     private String info;
 
     private Integer manageruserid;

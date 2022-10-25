@@ -2,9 +2,7 @@ package com.itany.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.itany.constants.AppConsts;
-import com.itany.input.BaseInput;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -28,7 +26,11 @@ public class NoticeDTO implements Serializable {
 
     private Integer manageruserid;
 
+    private ManagerUserDTO managerUserDTO;
+
     private Integer userid;
+
+    private UserDTO userDTO;
 
     private Integer flag;
 
