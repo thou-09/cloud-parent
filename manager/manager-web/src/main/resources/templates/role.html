@@ -19,7 +19,26 @@
                 text: '修改',
                 iconCls: 'icon-edit',
                 handler: function () {
-                    $('#dd').dialog('open');
+                    let row = $('#userlist').datagrid('getSelected');
+                    if (row == null) {
+                        $.messager.alert('错误', '请选择一条数据');
+                    } else {
+                        $('#ff-id').textbox('setValue', row.id);
+                        $('#ff-name').textbox('setValue', row.name);
+                        $('#dd').dialog('open');
+                        let nodes = $('#ah').tree('getRoots');
+                        for (const node of nodes) {
+                            $('#ah').tree('uncheck', node.target);
+                        }
+                        for (const permission of row.permissions) {
+                            let node = $('#ah').tree('find', permission.id);
+                            if (!$('#ah').tree('isLeaf', node.target)) {
+                                $('#ah').tree('expand', node.target);
+                            } else {
+                                $('#ah').tree('check', node.target);
+                            }
+                        }
+                    }
                 }
             }, '-', {
                 text: '删除',
@@ -33,37 +52,47 @@
                 $('#userlist').datagrid({
                     title: '角色列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 50,
-                        "rows": [
-                            {id: 1, name: "角色1"},
-                            {id: 2, name: "角色2"},
-                            {id: 3, name: "角色3"},
-                            {id: 4, name: "角色4"},
-                            {id: 5, name: "角色5"}
-                        ]
-                    },
+                    url: '/manager/roles/list',
                     columns: [
                         [
                             {field: 'id', title: '角色ID', width: 100, align: 'center'},
                             {field: 'name', title: '角色名称', width: 100, align: 'center'},
                             {
-                                field: 'xx',
+                                field: 'permissions',
                                 title: '角色拥有的权限[权限名 | 权限URL | 模块名  ]',
                                 width: 500,
                                 align: 'center',
-                                formatter: format
+                                formatter: (val, row) => {
+                                    let html = '';
+                                    html += "<select name='search_type'>";
+                                    if (val.length !== 0) {
+                                        for (const permission of val) {
+                                            let str = permission.name + ' | '
+                                                + (permission.url === '' ? '-' : permission.url) + ' | '
+                                                + (permission.parentid === null ? '顶级模块' : permission.parentPermission.name)
+                                            html += "<option>" + str + "</option>";
+                                        }
+                                    } else {
+                                        html += "<option>暂无权限</option>";
+                                    }
+                                    html += "</select>";
+                                    return html;
+                                }
                             }
                         ]
                     ],
                     pagination: true,
-                    toolbar: toolbar
+                    pageList: [2, 4, 6, 8, 10],
+                    toolbar: toolbar,
+                    singleSelect: true
                 });
 
                 // 初始化查询栏
                 $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true})
                     .click(function () {
-
+                        $('#userlist').datagrid('load', {
+                            name: $('#searchform input[name=name]').val()
+                        });
                     });
 
                 // 初始化修改窗口
@@ -80,64 +109,56 @@
                         text: '提交',
                         iconCls: 'icon-ok',
                         handler: function () {
-                            alert('ok');
+                            let id = $('#ff-id').textbox('getValue');
+                            let name = $('#ff-name').textbox('getValue');
+                            let nodes = $('#ah').tree('getChecked', ['checked', 'indeterminate']);
+                            let ids = [];
+                            for (const node of nodes) {
+                                ids.push(node.id);
+                            }
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/roles/modify',
+                                data : {
+                                    id: id,
+                                    name: name,
+                                    permissionIds: ids
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    // console.log(data);
+                                    if (data.status === '00000') {
+                                        $('#dd').dialog('close');
+                                        $('#userlist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message);
+                                    }
+                                }
+                            })
                         }
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
+                            $('#dd').dialog('close');
                         }
                     }]
                 });
 
                 // tree 选项框初始化
                 $("#ah").tree({
-                    data: [{
-                        "id": 11,
-                        "text": "用户管理",
-                        "state": "closed",
-                        "children": [{
-                            "id": 111,
-                            "text": "前台用户管理"
-                        }, {
-                            "id": 112,
-                            "text": "留言管理",
-                            "checked": true
-                        }]
-                    }, {
-                        "id": 12,
-                        "text": "加盟管理",
-                        "children": [{
-                            "id": 121,
-                            "text": "本地生活加盟"
-                        }, {
-                            "id": 122,
-                            "text": "本地商务加盟"
-                        }]
-                    }],
+                    url: '/manager/permissions/tree',
                     method: 'post',
                     animate: true,
                     checkbox: true
                 });
-
             });
-
-            // 列格式化方法
-            function format(val, row) {
-                return "<select name='search_type'>"
-                    + "<option>留言管理|http://xxx|用户管理</option>"
-                    + "<option>留言管理|http://xxx|用户管理</option>"
-                    + "<option>留言管理|http://xxx|用户管理</option>"
-                    + "<option>留言管理|http://xxx|用户管理</option>"
-                    + "<option>留言管理|http://xxx|用户管理</option></select>";
-            }
         </script>
     </head>
     <body>
         <form name="searchform" method="post" action="" id="searchform">
             <td width="70" height="30"><strong>角色查询：</strong></td>
             <td height="30">
-                <input type="text" name="keyword" size=20 placeholder="角色名称"/>
+                <input type="text" name="name" size=20 placeholder="角色名称"/>
                 <a id="submit_search">搜索</a>
             </td>
         </form>
@@ -146,11 +167,11 @@
             <div align="center" style="margin-top: 30px">
                 <form id="ff" method="post">
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'角色ID:'"
+                        <input id="ff-id" class="easyui-textbox" name="id" style="width:50%" data-options="label:'角色ID:'"
                                readonly="readonly"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%"
+                        <input id="ff-name" class="easyui-textbox" name="name" style="width:50%"
                                data-options="label:'角色名称:',required:true">
                     </div>
                     <div style="margin-bottom:20px">

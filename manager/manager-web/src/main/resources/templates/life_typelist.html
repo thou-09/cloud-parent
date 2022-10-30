@@ -8,18 +8,15 @@
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
         <script type="text/javascript">
-            // 当前级别的 parentid
-            let thisParentid = null;
-            // 上一级的 parentid
-            let thatParentid = null;
-            // 级别
-            let typelevel = 1;
+            let nameStack = ['顶级类型'];
+            let typeLevel = 1;
+            let parentIdStack = [-1];
 
             $(function () {
                 $('#typelist').datagrid({
                     title: '生活服务类型列表',
                     iconCls: 'icon-save',
-                    url: '/manager/types/list?type=1',
+                    url: '/manager/types/list/-1/1',
                     columns: [
                         [
                             {field: 'id', title: '主键', width: 100, align: 'center'},
@@ -30,7 +27,7 @@
                                 width: 100,
                                 align: 'center',
                                 formatter: (val, row) => {
-                                    return val === '' ? '顶级类型' : val;
+                                    return nameStack[nameStack.length - 1];
                                 }
                             }
                         ]
@@ -99,12 +96,13 @@
                         text: '提交',
                         iconCls: 'icon-ok',
                         handler: function () {
+                            let pid = parentIdStack[parentIdStack.length - 1];
                             $.ajax({
                                 type : 'post',
                                 url : '/manager/types/add',
                                 data : {
                                     name: $('#dg2-name').textbox('getValue'),
-                                    parentid: thisParentid,
+                                    parentid: pid === -1 ? null : pid,
                                     type: 1
                                 },
                                 dataType : 'json',
@@ -152,7 +150,8 @@
                                 url : '/manager/types/delete',
                                 data : {
                                     id: row.id,
-                                    parentid: row.parentid
+                                    parentid: row.parentid,
+                                    level: typeLevel
                                 },
                                 dataType : 'json',
                                 success : (data) => {
@@ -189,22 +188,15 @@
 
             // 上一级
             function toUp() {
-                if (typelevel === 1) {
+                if (typeLevel === 1) {
                     $.messager.alert('错误', '当前为顶级类型，没有上一级')
-                    return;
-                }
-                if (thatParentid == null) {
-                    $('#typelist').datagrid({
-                        url: '/manager/types/list?type=1'
-                    });
                 } else {
+                    typeLevel--;
+                    nameStack.pop();
                     $('#typelist').datagrid({
-                        url: '/manager/types/list?type=1&parentid=' + thatParentid
+                        url: '/manager/types/listbros/' + parentIdStack.pop() + '/1'
                     });
                 }
-                typelevel--;
-                thisParentid = thatParentid;
-                thatParentid = null;
             }
 
             // 下一级
@@ -215,17 +207,16 @@
                     return;
                 }
 
-                if (typelevel === 2) {
-                    $.messager.alert('错误', '当前为二级类型，没有下一级')
-                    return;
+                if (typeLevel === 3) {
+                    $.messager.alert('错误', '当前为三级类型，没有下一级')
+                } else {
+                    typeLevel++;
+                    parentIdStack.push(row.id)
+                    nameStack.push(row.name);
+                    $('#typelist').datagrid({
+                         url: '/manager/types/list/' + row.id + '/1'
+                    });
                 }
-
-                $('#typelist').datagrid({
-                    url: '/manager/types/list?type=1&parentid=' + row.id
-                });
-                typelevel++;
-                thisParentid = row.id;
-                thatParentid = row.parentid
             }
 
             // 删除

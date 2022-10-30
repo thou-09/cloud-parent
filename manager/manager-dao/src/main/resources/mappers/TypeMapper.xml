@@ -44,33 +44,27 @@
             )
     </select>
 
-    <select id="listAllByParams" resultType="com.itany.dto.TypeDTO">
-        <if test="null == parentid">
-            select *
-            from t_type
-            <where>
-                    and parentid is null
-                <if test="null != type">
-                    and type = #{type}
-                </if>
-            </where>
-        </if>
-        <if test="null != parentid">
-            select tt1.*, tt2.name as parentname
-            from t_type tt1
-                    left join t_type tt2 on tt1.parentid = tt2.id
-            <where>
-                <if test="-1 == parentid">
-                    and tt1.parentid is not null
-                </if>
-                <if test="-1 != parentid">
-                    and tt1.parentid = #{parentid}
-                </if>
-                <if test="null != type">
-                    and tt1.type = #{type}
-                </if>
-            </where>
-        </if>
+    <select id="listByTypeAndParentid" resultType="typeDTO">
+        select *
+        from t_type
+        <where>
+            <if test="null != parentid">
+                and parentid = #{parentid}
+            </if>
+            <if test="null == parentid">
+                and parentid is null
+            </if>
+            <if test="null != type">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+    
+    <select id="listBrosByTypeAndId" resultType="typeDTO">
+        select tt1.*
+        from t_type tt1
+                left join t_type tt2 on tt1.parentid = tt2.parentid
+        where tt2.type = #{type} and tt2.id = #{id}
     </select>
 
     <select id="getTypeById" resultType="com.itany.dto.TypeDTO">
@@ -80,17 +74,65 @@
     </select>
 
     <select id="selectRelation" resultType="integer">
-        <if test="null == parentid">
+        <if test="1 == level">
             select tst.id
-            from t_type tt
-                    left join t_server_type tst on tt.id = tst.typeid
-            where tt.parentid = #{id}
+            from t_type tt1
+                    left join t_type tt2 on tt1.id = tt2.parentid
+                    left join t_type tt3 on tt2.id = tt3.parentid
+                    left join t_server_type tst on tt3.id = tst.typeid
+            where tt1.id = #{id}
         </if>
-        <if test="null != parentid">
+        <if test="2 == level">
             select tst.id
-            from t_type tt
-                    left join t_server_type tst on tt.id = tst.typeid
-            where tt.id = #{id}
+            from t_type tt1
+                    left join t_type tt2 on tt1.id = tt2.parentid
+                    left join t_server_type tst on tt2.id = tst.typeid
+            where tt1.id = #{id}
+        </if>
+        <if test="3 == level">
+            select tst.id
+            from t_type tt1
+                    left join t_server_type tst on tt1.id = tst.typeid
+            where tt1.id = #{id}
         </if>
     </select>
+
+    <select id="listTreeByType" resultMap="tree_map">
+        select
+                tt1.id tt1_id,
+                tt1.name tt1_name,
+                tt1.parentid tt1_parentid,
+                tt1.type tt1_type,
+                tt2.id tt2_id,
+                tt2.name tt2_name,
+                tt2.parentid tt2_parentid,
+                tt2.type tt2_type,
+                tt3.id tt3_id,
+                tt3.name tt3_name,
+                tt3.parentid tt3_parentid,
+                tt3.type tt3_type
+        from t_type tt1
+                 left join t_type tt2 on tt1.id = tt2.parentid
+                 left join t_type tt3 on tt2.id = tt3.parentid
+        where tt1.type = #{type} and tt1.parentid is null
+    </select>
+
+    <resultMap id="tree_map" type="typeDTO">
+        <id property="id" column="tt1_id"/>
+        <result property="name" column="tt1_name"/>
+        <result property="parentid" column="tt1_parentid"/>
+        <result property="type" column="tt1_type"/>
+        <collection property="sons" ofType="typeDTO">
+            <id property="id" column="tt2_id"/>
+            <result property="name" column="tt2_name"/>
+            <result property="parentid" column="tt2_parentid"/>
+            <result property="type" column="tt2_type"/>
+            <collection property="sons" ofType="typeDTO">
+                <id property="id" column="tt3_id"/>
+                <result property="name" column="tt3_name"/>
+                <result property="parentid" column="tt3_parentid"/>
+                <result property="type" column="tt3_type"/>
+            </collection>
+        </collection>
+    </resultMap>
 </mapper>

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,27 @@ public class TypeServiceImpl implements TypeService {
     public TypeMapper typeMapper;
 
     @Override
-    public Map<String, Object> listAllByParams(TypeInput in) {
-        List<TypeDTO> dtos = typeMapper.listAllByParams(in);
+    public Map<String, Object> listByTypeAndParentid(TypeInput in) {
+        List<TypeDTO> dtos = typeMapper.listByTypeAndParentid(in);
+
+        Map<String, Object> map = new HashMap<>(4);
+        map.put("total", dtos.size());
+        map.put("rows", dtos);
+        return map;
+    }
+
+    @Override
+    public Map<String, Object> listBrosByTypeAndId(TypeInput in) {
+        TypeDTO typeDTO = typeMapper.getTypeById(in.getId());
+        List<TypeDTO> dtos = new ArrayList<>();
+        if (null == typeDTO.getParentid()) {
+            TypeInput input = new TypeInput();
+            input.setParentid(null);
+            input.setType(in.getType());
+            dtos = typeMapper.listByTypeAndParentid(input);
+        } else {
+            dtos = typeMapper.listBrosByTypeAndId(in);
+        }
 
         Map<String, Object> map = new HashMap<>(4);
         map.put("total", dtos.size());
@@ -54,25 +74,25 @@ public class TypeServiceImpl implements TypeService {
 
     @Override
     public void deleteTypeById(TypeInput in) {
-        List<Integer> ids = typeMapper.selectRelation(in);
-        if (ids.size() == 1 && null == ids.get(0)) {
-            if (null == in.getParentid()) {
-                TypeInput typeInput = new TypeInput();
-                typeInput.setParentid(in.getId());
-                List<Integer> removeIds = typeMapper.listAllByParams(typeInput)
-                        .stream()
-                        .map(TypeDTO::getId)
-                        .collect(Collectors.toList());
-                // 先删子类型
-                typeMapper.deleteTypeBatch(removeIds);
-                // 再删自己
-                typeMapper.deleteTypeById(in.getId());
-            } else {
-                // 直接删自己
-                typeMapper.deleteTypeById(in.getId());
-            }
-        } else {
-            throw new AppException(AppExceptionMsgEnum.TYPE_HAS_RELATION);
-        }
+        // List<Integer> ids = typeMapper.selectRelation(in);
+        // if (ids.size() == 1 && null == ids.get(0)) {
+        //     if (null == in.getParentid()) {
+        //         TypeInput typeInput = new TypeInput();
+        //         typeInput.setParentid(in.getId());
+        //         List<Integer> removeIds = typeMapper.listAllByParams(typeInput)
+        //                 .stream()
+        //                 .map(TypeDTO::getId)
+        //                 .collect(Collectors.toList());
+        //         // 先删子类型
+        //         typeMapper.deleteTypeBatch(removeIds);
+        //         // 再删自己
+        //         typeMapper.deleteTypeById(in.getId());
+        //     } else {
+        //         // 直接删自己
+        //         typeMapper.deleteTypeById(in.getId());
+        //     }
+        // } else {
+        //     throw new AppException(AppExceptionMsgEnum.TYPE_HAS_RELATION);
+        // }
     }
 }

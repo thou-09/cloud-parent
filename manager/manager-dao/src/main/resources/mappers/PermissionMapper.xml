@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.PermissionMapper">
+    
+    <update id="updateById">
+        update t_permission
+        <set>
+            <if test="null != name and '' != name">
+                name = #{name},
+            </if>
+            <if test="null != parentid">
+                parentid = #{parentid}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="listAllByParams" resultMap="dto_map">
+        select
+               tp1.id       tp1_id,
+               tp1.name     tp1_name,
+               tp1.parentid tp1_parentid,
+               tp1.url      tp1_url,
+               tp2.id       tp2_id,
+               tp2.name     tp2_name,
+               tp2.parentid tp2_parentid,
+               tp2.url      tp2_url
+        from t_permission tp1
+                 left join t_permission tp2 on tp1.parentid = tp2.id
+        <where>
+            <if test="null != name and '' != name">
+                and tp1.name = #{name}
+            </if>
+            <if test="null != parentname and '' != parentname">
+                <if test="'顶级模块' != parentname">
+                    and tp2.name = #{parentname}
+                </if>
+                <if test="'顶级模块' == parentname">
+                    and tp2.name is null
+                </if>
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="dto_map" type="permissionDTO">
+        <id property="id" column="tp1_id"/>
+        <result property="name" column="tp1_name"/>
+        <result property="parentid" column="tp1_parentid"/>
+        <result property="url" column="tp1_url"/>
+        <association property="parentPermission" javaType="permissionDTO">
+            <id property="id" column="tp2_id"/>
+            <result property="name" column="tp2_name"/>
+            <result property="parentid" column="tp2_parentid"/>
+            <result property="url" column="tp2_url"/>
+        </association>
+    </resultMap>
+
+    <select id="listTree" resultMap="tree_map">
+        select id, name, if(parentid is null, 'closed', null) as state
+        from t_permission
+        <where>
+            <if test="null == parentid">
+                and parentid is null
+            </if>
+            <if test="null != parentid">
+                and parentid = #{parentid}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="tree_map" type="com.itany.vo.PermissionVO">
+        <id property="id" column="id"/>
+        <result property="text" column="name"/>
+        <result property="state" column="state"/>
+        <collection property="children" ofType="permissionDTO" select="listTree" column="id"/>
+    </resultMap>
+</mapper>

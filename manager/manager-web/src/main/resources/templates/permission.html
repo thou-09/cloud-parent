@@ -8,34 +8,56 @@
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.min.js}"></script>
         <script type="text/javascript" th:src="@{/manager/easyui/jquery.easyui.min.js}"></script>
         <script type="text/javascript">
+            let topModel = null;
+
             $(function () {
+                $.ajax({
+                    type: 'post',
+                    url: '/manager/permissions/list?parentname=顶级模块',
+                    data: {},
+                    async: false,
+                    dataType: 'json',
+                    success: (data) => {
+                        topModel = data.rows;
+                    }
+                })
+
                 $('#userlist').datagrid({
                     title: '权限列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 10,
-                        "rows": [
-                            {"id": 1, "name": "用户管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
-                            {"id": 2, "name": "加盟商管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
-                            {"id": 3, "name": "服务管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
-                            {"id": 4, "name": "数据管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"},
-                            {"id": 5, "name": "权限管理", "parentid": "顶级模块", "url": "http://xxxxxxxxxx"}
-                        ]
-                    },
+                    url: '/manager/permissions/list',
                     columns: [
                         [
                             {field: 'id', title: '权限ID', width: 100, align: 'center'},
                             {field: 'name', title: '权限名称', width: 100, align: 'center'},
-                            {field: 'url', title: '权限URL', width: 200, align: 'center'},
-                            {field: 'parentid', title: '权限所在模块', width: 80, align: 'center'}
+                            {
+                                field: 'url', title: '权限URL', width: 200, align: 'center', formatter: (val, row) => {
+                                    return val === '' ? '-' : val;
+                                }
+                            },
+                            {
+                                field: 'parentPermission.name',
+                                title: '权限所在模块',
+                                width: 80,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return row.parentPermission != null ? row.parentPermission.name : '顶级模块';
+                                }
+                            }
                         ]
                     ],
+                    toolbar: "#tooldiv",
                     pagination: true,
-                    toolbar: "#tooldiv"
+                    pageList: [2, 4, 6, 8, 10],
+                    singleSelect: true
                 });
 
                 // 初始化查询栏
                 $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true}).click(function () {
+                    $('#userlist').datagrid('load', {
+                        name: $('#tooldiv input[name=name]').val(),
+                        parentname: $('#tooldiv input[name=parentname]').val()
+                    });
                 });
 
                 // 初始化修改窗口
@@ -52,27 +74,67 @@
                         text: '提交',
                         iconCls: 'icon-ok',
                         handler: function () {
-                            alert('ok');
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/permissions/modify',
+                                data : $('#ff').serialize(),
+                                dataType : 'json',
+                                success : (data) => {
+                                    if (data.status === '00000') {
+                                        $('#dd').dialog('close');
+                                        $('#userlist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message)
+                                    }
+                                }
+                            })
                         }
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
+                            $('#dd').dialog('close');
+                            $('#ff').reset();
                         }
                     }]
                 });
 
+                // 初始化下拉控件
+                $("#ff-parentid").combobox({
+                    width: 350,
+                    valueField: 'id',
+                    textField: 'name'
+                });
             });
 
             function openedit() {
-                $('#dd').dialog('open');
+                let row = $('#userlist').datagrid('getSelected');
+                if (row == null) {
+                    $.messager.alert('错误', '请选择一条数据')
+                } else {
+                    let selectid = null;
+                    if (null == row.parentPermission) {
+                        $("#ff-parentid").combobox({
+                            data: null
+                        });
+                    } else {
+                        $("#ff-parentid").combobox({
+                            data: topModel,
+                        });
+                        $("#ff-parentid").combobox('select', row.parentPermission.id);
+                    }
+
+                    $('#ff-id').textbox('setValue', row.id);
+                    $('#ff-url').textbox('setValue', row.url === '' ? '-' : row.url);
+                    $('#ff-name').textbox('setValue', row.name);
+                    $('#dd').dialog('open');
+                }
             }
         </script>
     </head>
     <body>
         <div id="tooldiv">
-            <input type="text" placeholder="请输入查询权限名称"/>
-            <input type="text" placeholder="请输入查询模块名称"/>
+            <input type="text" name="name" placeholder="请输入查询权限名称"/>
+            <input type="text" name="parentname" placeholder="请输入查询模块名称"/>
             <a id="submit_search">搜索</a>
             <a class="easyui-linkbutton" data-options="iconCls:'icon-edit'" onclick="openedit();">修改</a>
         </div>
@@ -81,24 +143,20 @@
             <div align="center" style="margin-top: 30px">
                 <form id="ff" method="post">
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'权限ID:'"
+                        <input id="ff-id" class="easyui-textbox" name="id" style="width:50%" data-options="label:'权限ID:'"
                                readonly="readonly"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'权限url:'"
+                        <input id="ff-url" class="easyui-textbox" name="url" style="width:50%" data-options="label:'权限url:'"
                                readonly="readonly"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%"
+                        <input id="ff-name" class="easyui-textbox" name="name" style="width:50%"
                                data-options="label:'权限名称:',required:true">
                     </div>
                     <div style="margin-bottom:20px">
-                        <select class="easyui-combobox" name="language" label="所属模块:" style="width:50%"
+                        <select id="ff-parentid" name="parentid" class="easyui-combobox" label="所属模块:" style="width:50%"
                                 data-options="multiple:false">
-                            <option value="-1">请选择模块</option>
-                            <option value="be_name">用户管理</option>
-                            <option value="be_intro">权限管理</option>
-                            <option value="be_intro">数据管理</option>
                         </select>
                     </div>
                 </form>

@@ -25,6 +25,7 @@ public enum AppExceptionMsgEnum {
     TYPE_NOT_EXIST("B0008", "类型数据不存在"),
     TYPE_HAS_RELATION("B0009", "当前类型有服务关联，不可删除"),
     NOTICE_NOT_EXIST("B0010", "通知数据不存在"),
+    USER_ACCESS_NOT_ALLOWED("B0011", "用户没有权限"),
     ;
 
     /**

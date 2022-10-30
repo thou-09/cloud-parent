@@ -12,6 +12,7 @@ import com.itany.mapper.AnnexMapper;
 import com.itany.mapper.ServerCommpanyMapper;
 import com.itany.service.ServerCommpanyService;
 import com.itany.util.AliyunOssUtils;
+import com.itany.vo.ServerCommpanyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -118,5 +119,10 @@ public class ServerCommpanyServiceImpl implements ServerCommpanyService {
                 .collect(Collectors.toList());
         dto.setAnnexes(annexes);
         return dto;
+    }
+
+    @Override
+    public List<ServerCommpanyVO> listServerCommpanySimple() {
+        return serverCommpanyMapper.listServerCommpanySimple();
     }
 }

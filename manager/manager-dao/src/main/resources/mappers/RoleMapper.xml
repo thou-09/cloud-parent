@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.mapper.RoleMapper">
+
+    <insert id="insertRolePermissionBatch">
+        insert into t_role_permission (roleid, permissionid)
+        values
+        <foreach collection="list" item="rp" separator=",">
+            (#{rp.roleid}, #{rp.permissionid})
+        </foreach>
+    </insert>
+
+    <update id="updateRoleById">
+        update t_role
+        <set>
+            <if test="null != name and '' != name">
+                name = #{name},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRolePermissionByRoleId">
+        delete
+        from t_role_permission
+        where roleid = #{roleid}
+    </delete>
+
+    <select id="listAllByParam" resultMap="dto_map">
+        select *
+        from t_role
+        <where>
+            <if test="null != name and '' != name">
+                name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="dto_map" type="roleDTO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <collection property="permissions" ofType="permissionDTO" select="selectPer" column="id"/>
+    </resultMap>
+
+    <select id="selectPer" resultMap="per_dto_map">
+        select
+            tp1.id       tp1_id,
+            tp1.name     tp1_name,
+            tp1.parentid tp1_parentid,
+            tp1.url      tp1_url,
+            tp2.id       tp2_id,
+            tp2.name     tp2_name,
+            tp2.parentid tp2_parentid,
+            tp2.url      tp2_url
+        from t_permission tp1
+                 left join t_permission tp2 on tp1.parentid = tp2.id
+                 left join t_role_permission trp on tp1.id = trp.permissionid
+        where trp.roleid = #{id}
+    </select>
+
+    <resultMap id="per_dto_map" type="permissionDTO">
+        <id property="id" column="tp1_id"/>
+        <result property="name" column="tp1_name"/>
+        <result property="parentid" column="tp1_parentid"/>
+        <result property="url" column="tp1_url"/>
+        <association property="parentPermission" javaType="permissionDTO">
+            <id property="id" column="tp2_id"/>
+            <result property="name" column="tp2_name"/>
+            <result property="parentid" column="tp2_parentid"/>
+            <result property="url" column="tp2_url"/>
+        </association>
+    </resultMap>
+
+    <select id="listRoleSimple" resultType="com.itany.vo.RoleVO">
+        select id, name as text
+        from t_role;
+    </select>
+
+    <select id="amOne" resultMap="am_map_one">
+        select id
+        from t_role tr
+    </select>
+
+    <select id="amTwo" resultType="permissionDTO">
+        select tp.*
+        from t_permission tp
+                left join t_role_permission trp on tp.id = trp.permissionid
+        where trp.roleid = #{id}
+    </select>
+
+    <resultMap id="am_map_one" type="roleDTO">
+        <id property="id" column="id"/>
+        <collection property="permissions" ofType="permissionDTO" select="amTwo" column="id"/>
+    </resultMap>
+
+    <select id="amFour" resultType="roleDTO">
+        select tr.id, tp.url
+        from t_role tr
+                 left join t_role_permission trp on tr.id = trp.roleid
+                 left join t_permission tp on trp.permissionid = tp.id
+        where tp.url is not null
+    </select>
+</mapper>

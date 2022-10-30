@@ -6,6 +6,7 @@ import com.itany.service.ServerCommpanyService;
 import com.itany.validation.Update;
 import com.itany.validation.UpdateFlag;
 import com.itany.vo.ResponseResult;
+import com.itany.vo.ServerCommpanyVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,11 @@ public class ServerCommpanyController {
     @PostMapping("/companylist")
     public Map<String, Object> listServerCommpanys(ServerCommpanyInput in) {
         return serverCommpanyService.listAllByParams(in);
+    }
+
+    @RequestMapping("/simple")
+    public List<ServerCommpanyVO> listServerCommpanySimple() {
+        return serverCommpanyService.listServerCommpanySimple();
     }
 
     @PostMapping("/modify")

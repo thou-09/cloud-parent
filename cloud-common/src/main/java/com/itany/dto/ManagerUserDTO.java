@@ -1,8 +1,10 @@
 package com.itany.dto;
 
+import com.itany.entity.Role;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * ManagerUserDTO.
@@ -22,4 +24,8 @@ public class ManagerUserDTO implements Serializable {
     // private String password;
 
     private Integer commpanyid;
+
+    private String companyname;
+
+    private List<Role> roles;
 }

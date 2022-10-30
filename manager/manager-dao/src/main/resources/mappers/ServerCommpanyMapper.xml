@@ -91,6 +91,11 @@
           and tsc.id = #{id}
     </select>
 
+    <select id="listServerCommpanySimple" resultType="com.itany.vo.ServerCommpanyVO">
+        select id, name as text
+        from t_server_commpany;
+    </select>
+
     <update id="updateServerCommpanyById">
         update t_server_commpany
         <set>

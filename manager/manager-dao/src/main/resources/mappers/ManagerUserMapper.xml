@@ -4,8 +4,46 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.itany.mapper.ManagerUserMapper">
 
-    <select id="getOneByUsernameAndPassword" resultType="managerUserDTO">
-        select id, username, password, commpanyid
+    <insert id="insertManagerUser" useGeneratedKeys="true" keyProperty="id">
+        insert into t_manager_user
+            (username, password, commpanyid)
+        values
+            (#{username}, #{password}, #{commpanyid});
+    </insert>
+
+    <insert id="insertUserRoleBatch" parameterType="list">
+        insert into t_user_role
+            (userid, roleid)
+        values
+            <foreach collection="list" item="ur" separator=",">
+                (#{ur.userid}, #{ur.roleid})
+            </foreach>
+    </insert>
+
+    <update id="updateById">
+        update t_manager_user
+        <set>
+            <if test="null != username and '' != username">
+                username = #{username},
+            </if>
+            <if test="null != password and '' != password">
+                password = #{password},
+            </if>
+            <if test="null != commpanyid">
+                commpanyid = #{commpanyid},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserRoleByUserid">
+        delete
+        from t_user_role
+        where userid = #{userid}
+    </delete>
+
+    <select id="getOneByUsernameAndPassword" resultMap="role_dto_map">
+        select *
         from t_manager_user
         <where>
             <if test="null != username and '' != username">
@@ -15,5 +53,31 @@
                 and password = #{password}
             </if>
         </where>
+    </select>
+
+    <select id="listAllWithRole" resultMap="role_dto_map">
+        select tmu.*, tsc.name as companyname
+        from t_manager_user tmu
+                left join t_server_commpany tsc on tmu.commpanyid = tsc.id
+        <where>
+            <if test="null != username and '' != username">
+                username = #{username}
+            </if>
+        </where>
+    </select>
+
+    <resultMap id="role_dto_map" type="managerUserDTO">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="commpanyid" column="commpanyid"/>
+        <result property="companyname" column="companyname"/>
+        <collection property="roles" ofType="role" select="withRole" column="id"/>
+    </resultMap>
+
+    <select id="withRole" resultType="role">
+        select tr.*
+        from t_user_role tur
+                left join t_role tr on tur.roleid = tr.id
+        where tur.userid = #{id}
     </select>
 </mapper>

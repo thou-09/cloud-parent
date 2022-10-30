@@ -2,8 +2,10 @@ package com.itany.service;
 
 import com.itany.dto.ServerCommpanyDTO;
 import com.itany.input.ServerCommpanyInput;
+import com.itany.vo.ServerCommpanyVO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,4 +46,13 @@ public interface ServerCommpanyService {
      * @date 2022/10/21
      */
     ServerCommpanyDTO getServerCommpanyById(Integer id);
+
+    /**
+     * 只查询 Servercommpany 不包含其他信息
+     *
+     * @return java.util.List<com.itany.vo.ServerCommpanyVO>
+     * @author Thou
+     * @date 2022/10/29
+     */
+    List<ServerCommpanyVO> listServerCommpanySimple();
 }

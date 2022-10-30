@@ -1,6 +1,7 @@
 package com.itany.mapper;
 
 import com.itany.dto.TypeDTO;
+import com.itany.entity.Type;
 import com.itany.input.TypeInput;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,14 +26,24 @@ public interface TypeMapper {
     List<TypeDTO> listTypesByIds(@Param("ids") List<String> ids);
 
     /**
-     * 根据条件查询 Types
+     * 根据 type 和 parentid 查找 Types
      *
      * @param in -
      * @return java.util.List<com.itany.dto.TypeDTO>
      * @author Thou
-     * @date 2022/10/24
+     * @date 2022/10/26
      */
-    List<TypeDTO> listAllByParams(TypeInput in);
+    List<TypeDTO> listByTypeAndParentid(TypeInput in);
+
+    /**
+     * 根据 type 和 id 查找兄弟 Types
+     *
+     * @param in -
+     * @return java.util.List<com.itany.dto.TypeDTO>
+     * @author Thou
+     * @date 2022/10/26
+     */
+    List<TypeDTO> listBrosByTypeAndId(TypeInput in);
 
     /**
      * 根据 id 修改 Type
@@ -89,4 +100,14 @@ public interface TypeMapper {
      * @date 2022/10/25
      */
     List<Integer> selectRelation(TypeInput in);
+
+    /**
+     * 查询 Type 三层树
+     *
+     * @param type -
+     * @return java.util.List<com.itany.dto.TypeDTO>
+     * @author Thou
+     * @date 2022/10/26
+     */
+    List<TypeDTO> listTreeByType(@Param("type") Integer type);
 }

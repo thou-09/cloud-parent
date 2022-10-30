@@ -7,6 +7,7 @@ import com.itany.validation.Update;
 import com.itany.vo.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +27,24 @@ public class TypeController {
     @Autowired
     public TypeService typeService;
 
-    @PostMapping("/list")
-    public Map<String, Object> listTypes(TypeInput in) {
-        return typeService.listAllByParams(in);
+    @PostMapping("/list/{parentid}/{type}")
+    public Map<String, Object> listByTypeAndParentid(@PathVariable Integer parentid, @PathVariable Integer type) {
+        TypeInput in = new TypeInput();
+        if (-1 == parentid) {
+            in.setParentid(null);
+        } else {
+            in.setParentid(parentid);
+        }
+        in.setType(type);
+        return typeService.listByTypeAndParentid(in);
+    }
+
+    @PostMapping("/listbros/{id}/{type}")
+    public Map<String, Object> listBrosByTypeAndId(@PathVariable Integer id, @PathVariable Integer type) {
+        TypeInput in = new TypeInput();
+        in.setId(id);
+        in.setType(type);
+        return typeService.listBrosByTypeAndId(in);
     }
 
     @PostMapping("/modify")
@@ -45,7 +61,9 @@ public class TypeController {
 
     @PostMapping("/delete")
     public ResponseResult<Object> deleteType(TypeInput in) {
-        typeService.deleteTypeById(in);
+        // typeService.deleteTypeById(in);
+        // 暂未实现
+
         return ResponseResult.success();
     }
 }

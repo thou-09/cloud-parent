@@ -3,6 +3,7 @@ package com.itany.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * TypeDTO.
@@ -23,5 +24,5 @@ public class TypeDTO implements Serializable {
 
     private Integer type;
 
-    private String parentname;
+    private List<TypeDTO> sons;
 }

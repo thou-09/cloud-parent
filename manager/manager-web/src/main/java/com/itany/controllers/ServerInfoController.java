@@ -30,7 +30,7 @@ public class ServerInfoController {
     @Autowired
     private ServerInfoService serverInfoService;
 
-    @PostMapping("/list")
+    @RequestMapping("/list")
     public Map<String, Object> listServers(ServerInfoInput in) {
         return serverInfoService.listAllByParams(in);
     }

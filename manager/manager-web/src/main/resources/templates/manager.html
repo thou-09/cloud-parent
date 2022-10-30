@@ -19,38 +19,65 @@
                 text: '修改',
                 iconCls: 'icon-edit',
                 handler: function () {
-                    $('#dd').dialog('open');
+                    let row = $('#userlist').datagrid('getSelected');
+                    if (row == null) {
+                        $.messager.alert('错误', '请选择一条数据');
+                    } else {
+                        $('#dd').dialog('open');
+                        $('#ff-id').textbox('setValue', row.id);
+                        $('#ff-username').textbox('setValue', row.username);
+                        $("#commpanylist").combobox("select", row.commpanyid);
+                        for (const role of row.roles) {
+                            $('#ah').tree('check', $('#ah').tree('find', role.id).target);
+                        }
+                    }
                 }
             }];
             $(function () {
                 $('#userlist').datagrid({
                     title: '管理员列表',
                     iconCls: 'icon-save',
-                    data: {
-                        "total": 50,
-                        "rows": [
-                            {id: 1, "username": "服务商人员1", "password": "123123123123123"},
-                            {id: 2, "username": "服务商人员2", "password": "123123123123123"},
-                            {id: 3, "username": "服务商人员3", "password": "123123123123123"},
-                            {id: 4, "username": "服务商人员4", "password": "123123123123123"},
-                            {id: 5, "username": "服务商人员5", "password": "123123123123123"},
-                            {id: 6, "username": "服务商人员6", "password": "123123123123123"}
-                        ]
-                    },
+                    url: '/manager/managerUsers/list',
                     columns: [
                         [
                             {field: 'id', title: '管理员ID', width: 100, align: 'center'},
                             {field: 'username', title: '管理员名称', width: 100, align: 'center'},
-                            {field: 'password', title: '管理员密码', width: 100, align: 'center'},
-                            {field: 'roles', title: '拥有的角色', width: 200, align: 'center', formatter: format}
+                            {
+                                field: 'password',
+                                title: '管理员密码',
+                                width: 100,
+                                align: 'center',
+                                formatter: (val, row) => {
+                                    return '-';
+                                }
+                            },
+                            {
+                                field: 'roles', title: '拥有的角色', width: 200, align: 'center', formatter: (val, row) => {
+                                    let html = '';
+                                    html += "<select name='search_type'>";
+                                    if (val.length !== 0) {
+                                        for (const role of val) {
+                                            html += "<option>" + role.name + "</option>";
+                                        }
+                                    } else {
+                                        html += "<option>暂无角色</option>";
+                                    }
+                                    html += "</select>";
+                                    return html;
+                                }
+                            }
                         ]
                     ],
                     pagination: true,
-                    toolbar: toolbar
+                    toolbar: toolbar,
+                    singleSelect: true
                 });
 
                 // 初始化查询栏
                 $("#submit_search").linkbutton({iconCls: 'icon-search', plain: true}).click(function () {
+                    $('#userlist').datagrid('load', {
+                        username: $('#username').val()
+                    });
                 });
 
                 // 初始化修改窗口
@@ -67,36 +94,44 @@
                         text: '提交',
                         iconCls: 'icon-ok',
                         handler: function () {
-                            alert('ok');
+                            let nodes = $("#ah").tree('getChecked');
+                            let ids = [];
+                            for (const node of nodes) {
+                                ids.push(node.id);
+                            }
+                            $.ajax({
+                                type : 'post',
+                                url : '/manager/managerUsers/modify',
+                                data : {
+                                    id: $('#ff-id').textbox('getValue'),
+                                    username: $('#ff-username').textbox('getValue'),
+                                    password: $('#ff-password').textbox('getValue'),
+                                    commpanyid: $('#commpanylist').combobox('getValue'),
+                                    roleIds: ids
+                                },
+                                dataType : 'json',
+                                success : (data) => {
+                                    // console.log(data);
+                                    if (data.status === '00000') {
+                                        $('#dd').dialog('close');
+                                        $('#userlist').datagrid('reload');
+                                    } else {
+                                        $.messager.alert('错误', data.message);
+                                    }
+                                }
+                            })
                         }
                     }, {
                         text: '关闭',
                         handler: function () {
-                            alert('cancel');
-                            ;
+                            $('#dd').dialog('close');
                         }
                     }]
                 });
 
                 // tree选项框初始化
                 $("#ah").tree({
-                    data: [{
-                        "id": 121,
-                        "text": "角色1"
-                    }, {
-                        "id": 122,
-                        "text": "角色2"
-                    }, {
-                        "id": 123,
-                        "text": "角色3"
-                    }, {
-                        "id": 123,
-                        "text": "角色4"
-                    }, {
-                        "id": 123,
-                        "text": "角色5"
-                    }
-                    ],
+                    url: '/manager/roles/simple',
                     method: 'post',
                     animate: true,
                     checkbox: true
@@ -104,16 +139,7 @@
 
                 // 初始化下拉控件
                 $("#commpanylist").combobox({
-                    data: [{
-                        id: 1,
-                        text: "月嫂排名家政"
-                    }, {
-                        id: 2,
-                        text: "康正金融公司"
-                    }, {
-                        id: 3,
-                        text: "信合贷款公司"
-                    }],
+                    url: '/manager/serverCompanies/simple',
                     width: 350,
                     label: "服务商",
                     valueField: 'id',
@@ -121,23 +147,13 @@
                 });
 
             });
-
-            // 列格式化方法
-            function format(val, row) {
-                return "<select name='search_type' style='width:100%'>"
-                    + "<option>角色1</option>"
-                    + "<option>角色2</option>"
-                    + "<option>角色3</option>"
-                    + "<option>角色4</option>"
-                    + "<option>角色5</option></select>";
-            }
         </script>
     </head>
     <body>
         <form name="searchform" method="post" action="" id="searchform">
             <td width="70" height="30"><strong>管理员查询：</strong></td>
             <td height="30">
-                <input type="text" name="keyword" size=20 placeholder="管理员名称"/>
+                <input type="text" id="username" name="keyword" size=20 placeholder="管理员名称"/>
                 <a id="submit_search">搜索</a>
             </td>
         </form>
@@ -146,15 +162,15 @@
             <div align="center" style="margin-top: 30px">
                 <form id="ff" method="post">
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%" data-options="label:'管理员ID:'"
+                        <input id="ff-id" class="easyui-textbox" name="id" style="width:50%" data-options="label:'管理员ID:'"
                                readonly="readonly"/>
                     </div>
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" type="password" name="name" style="width:50%"
+                        <input id="ff-password" class="easyui-textbox" type="password" name="name" style="width:50%"
                                data-options="label:'管理员密码:',required:true">
                     </div>
                     <div style="margin-bottom:20px">
-                        <input class="easyui-textbox" name="name" style="width:50%"
+                        <input id="ff-username" class="easyui-textbox" name="username" style="width:50%"
                                data-options="label:'管理员名称:',required:true">
                     </div>
                     <div style="margin-bottom:20px">

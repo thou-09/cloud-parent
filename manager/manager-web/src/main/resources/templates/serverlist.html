@@ -237,7 +237,7 @@
                             $('#editdg-phone').textbox('setValue', info.phone);
                             $('#editdg-commpanyname').textbox('setValue', info.commpanyname);
                             $('#editdg-commpanytype').textbox('setValue', info.commpanytype === 1 ? '生活' : '商务');
-                            $('#editdg-memberlevel').textbox('setValue', info.memberlevel);
+                            $('#editdg-memberlevel').textbox('setValue', info.memberlevel === '' ? '-' : info.memberlevel);
                             $('#editdg-info').val(info.info);
 
                             $('#editdg-imgbox').empty();

@@ -1,7 +1,9 @@
 package com.itany.service;
 
+import com.itany.dto.TypeDTO;
 import com.itany.input.TypeInput;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,14 +15,24 @@ import java.util.Map;
 public interface TypeService {
 
     /**
-     * 根据条件查询 Types
+     * 根据 type 和 parentid 查找 Types
      *
      * @param in -
      * @return java.util.Map<java.lang.String,java.lang.Object>
      * @author Thou
-     * @date 2022/10/24
+     * @date 2022/10/26
      */
-    Map<String, Object> listAllByParams(TypeInput in);
+    Map<String, Object> listByTypeAndParentid(TypeInput in);
+
+    /**
+     * 根据 type 和 id 查找兄弟 Types
+     *
+     * @param in -
+     * @return java.util.Map<java.lang.String,java.lang.Object>
+     * @author Thou
+     * @date 2022/10/26
+     */
+    Map<String, Object> listBrosByTypeAndId(TypeInput in);
 
     /**
      * 根据 id 修改 Type

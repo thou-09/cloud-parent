@@ -29,6 +29,8 @@ public class TypeInput extends BaseInput implements Serializable {
 
     private Integer parentid;
 
+    private Integer level;
+
     @NotNull(message = "类型不能为空", groups = {Insert.class})
     private Integer type;
 }

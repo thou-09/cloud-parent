@@ -2,6 +2,7 @@ package com.itany.mapper;
 
 import com.itany.dto.ServerCommpanyDTO;
 import com.itany.input.ServerCommpanyInput;
+import com.itany.vo.ServerCommpanyVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -51,4 +52,13 @@ public interface ServerCommpanyMapper {
      * @date 2022/10/23
      */
     void insertServerCommpany(ServerCommpanyInput in);
+
+    /**
+     * 只查询 ServerCommpany 不包含其他信息
+     *
+     * @return java.util.List<com.itany.vo.ServerCommpanyVO>
+     * @author Thou
+     * @date 2022/10/29
+     */
+    List<ServerCommpanyVO> listServerCommpanySimple();
 }
