@@ -11,106 +11,106 @@
         <script type="text/javascript" th:src='@{/manager/js/outlook.js}'></script>
 
         <script type="text/javascript">
-            let _menus1 = null;
-            let _menus = [{
-                "menuid": "1",
-                "icon": "icon-sys",
-                "menuname": "用户管理",
-                "menus": [{
-                    "menuid": "2",
-                    "menuname": "前台用户管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/userlist"
-                }, {
-                    "menuid": "22",
-                    "menuname": "留言管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/messagelist"
-                }]
-            }, {
-                "menuid": "3",
-                "icon": "icon-sys",
-                "menuname": "加盟管理",
-                "menus": [{
-                    "menuid": "4",
-                    "menuname": "本地生活加盟",
-                    "icon": "icon-nav",
-                    "url": "/manager/server_life"
-                }, {
-                    "menuid": "5",
-                    "menuname": "本地商务加盟",
-                    "icon": "icon-nav",
-                    "url": "/manager/server_commerce"
-                }, {
-                    "menuid": "6",
-                    "menuname": "加盟审核",
-                    "icon": "icon-nav",
-                    "url": "/manager/commpany_examinelist"
-                }]
-            }, {
-                "menuid": "7",
-                "icon": "icon-sys",
-                "menuname": "服务管理",
-                "menus": [{
-                    "menuid": "8",
-                    "menuname": "服务审核",
-                    "icon": "icon-nav",
-                    "url": "/manager/server_examinelist"
-                }, {
-                    "menuid": "23",
-                    "menuname": "平台服务",
-                    "icon": "icon-nav",
-                    "url": "/manager/serverlist"
-                }, {
-                    "menuid": "9",
-                    "menuname": "前台子账号",
-                    "icon": "icon-nav",
-                    "url": "/manager/subaccount"
-                }]
-
-            }, {
-                "menuid": "12",
-                "icon": "icon-sys",
-                "menuname": "数据管理",
-                "menus": [{
-                    "menuid": "13",
-                    "menuname": "生活服务类型管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/life_typelist"
-                }, {
-                    "menuid": "14",
-                    "menuname": "商务服务类型管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/commerce_typelist"
-                }, {
-                    "menuid": "17",
-                    "menuname": "站内通知管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/notice"
-                }]
-
-            }, {
-                "menuid": "18",
-                "icon": "icon-sys",
-                "menuname": "权限管理",
-                "menus": [{
-                    "menuid": "19",
-                    "menuname": "权限管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/permission"
-                }, {
-                    "menuid": "20",
-                    "menuname": "角色管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/role"
-                }, {
-                    "menuid": "21",
-                    "menuname": "后台用户管理",
-                    "icon": "icon-nav",
-                    "url": "/manager/manager"
-                }]
-
-            }];
+            // let _menus1 = null;
+            // let _menus = [{
+            //     "menuid": "1",
+            //     "icon": "icon-sys",
+            //     "menuname": "用户管理",
+            //     "menus": [{
+            //         "menuid": "2",
+            //         "menuname": "前台用户管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/userlist"
+            //     }, {
+            //         "menuid": "22",
+            //         "menuname": "留言管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/messagelist"
+            //     }]
+            // }, {
+            //     "menuid": "3",
+            //     "icon": "icon-sys",
+            //     "menuname": "加盟管理",
+            //     "menus": [{
+            //         "menuid": "4",
+            //         "menuname": "本地生活加盟",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/server_life"
+            //     }, {
+            //         "menuid": "5",
+            //         "menuname": "本地商务加盟",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/server_commerce"
+            //     }, {
+            //         "menuid": "6",
+            //         "menuname": "加盟审核",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/commpany_examinelist"
+            //     }]
+            // }, {
+            //     "menuid": "7",
+            //     "icon": "icon-sys",
+            //     "menuname": "服务管理",
+            //     "menus": [{
+            //         "menuid": "8",
+            //         "menuname": "服务审核",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/server_examinelist"
+            //     }, {
+            //         "menuid": "23",
+            //         "menuname": "平台服务",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/serverlist"
+            //     }, {
+            //         "menuid": "9",
+            //         "menuname": "前台子账号",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/subaccount"
+            //     }]
+            //
+            // }, {
+            //     "menuid": "12",
+            //     "icon": "icon-sys",
+            //     "menuname": "数据管理",
+            //     "menus": [{
+            //         "menuid": "13",
+            //         "menuname": "生活服务类型管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/life_typelist"
+            //     }, {
+            //         "menuid": "14",
+            //         "menuname": "商务服务类型管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/commerce_typelist"
+            //     }, {
+            //         "menuid": "17",
+            //         "menuname": "站内通知管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/notice"
+            //     }]
+            //
+            // }, {
+            //     "menuid": "18",
+            //     "icon": "icon-sys",
+            //     "menuname": "权限管理",
+            //     "menus": [{
+            //         "menuid": "19",
+            //         "menuname": "权限管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/permission"
+            //     }, {
+            //         "menuid": "20",
+            //         "menuname": "角色管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/role"
+            //     }, {
+            //         "menuid": "21",
+            //         "menuname": "后台用户管理",
+            //         "icon": "icon-nav",
+            //         "url": "/manager/manager"
+            //     }]
+            //
+            // }];
 
             // 设置登录窗口
             function openPwd() {

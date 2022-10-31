@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
 <head>
+    <title>登录</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
     <script>
           function getParams(){
               let url = location.search;
               let obj = null;
-              if(url.indexOf("?")!=-1){
-                  obj = new Object();
+              if(url.indexOf("?")!==-1){
+                  obj = {};
                   let str = url.substr(1);
                   let ps = str.split("&");
                   for(let i=0;i<ps.length;i++){
                       obj[ps[i].split("=")[0]]=decodeURIComponent(ps[i].split("=")[1]);
                   }
               }
-
               return obj;
           }
-
           $(function (){
                console.log(getParams());
           });

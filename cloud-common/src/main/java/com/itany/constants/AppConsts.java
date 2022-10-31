@@ -10,6 +10,10 @@ public interface AppConsts {
 
     // 全局使用
     /**
+     * 默认用户头像
+     */
+    String DEFAULT_HEADIMG = "/2022/10/22/61378b57d9714d919d597b48656aabf1apple.png";
+    /**
      * 默认页面起始页
      */
     Integer DEFAULT_PAGE_NO = 1;

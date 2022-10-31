@@ -26,6 +26,14 @@ public enum AppExceptionMsgEnum {
     TYPE_HAS_RELATION("B0009", "当前类型有服务关联，不可删除"),
     NOTICE_NOT_EXIST("B0010", "通知数据不存在"),
     USER_ACCESS_NOT_ALLOWED("B0011", "用户没有权限"),
+
+    USER_NAME_IS_BLACK("C0001", "用户名不可为空"),
+    USER_PHONE_IS_BLACK("C0002", "手机号不可为空"),
+    USER_PASSWORD_IS_BLACK("C0003", "密码不可为空"),
+    USER_REPASSWORD_IS_BLACK("C0004", "确认密码不可为空"),
+    USER_PASSWORD_NOT_EQUALS("C0005", "两次输入密码不一致"),
+    USER_CHECKCODE_IS_BLACK("C0006", "验证码不可为空"),
+    USER_CHECKCODE_IS_ERROR("C0007", "验证码不一致"),
     ;
 
     /**

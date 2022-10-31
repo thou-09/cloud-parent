@@ -14,14 +14,14 @@ public class ApplicationHold implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-      this.applicationContext=applicationContext;
+      ApplicationHold.applicationContext = applicationContext;
     }
 
     public static Object getBean(String beanName){
          return applicationContext.getBean(beanName);
     }
 
-    public static  <T> T getbean(Class<T> clazz){
+    public static <T> T getBean(Class<T> clazz){
         return applicationContext.getBean(clazz);
     }
 }

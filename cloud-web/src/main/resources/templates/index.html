@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>本地服务</title>
-    <link rel="stylesheet" href="./assets/swiper/swiper-bundle.min.css">
-    <link rel="stylesheet" href="./assets/css/base.css">
-    <link rel="stylesheet" href="./assets/font/iconfont.css">
+    <link rel="stylesheet" th:href="@{/assets/swiper/swiper-bundle.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/font/iconfont.css}">
 </head>
 
 <body>
@@ -19,21 +19,21 @@
             <ul class="btns">
                 <li class="user-info">
                     <span>张三</span>
-                    <a href="./back-manager.html">[ 个人中心 ]</a>
+                    <a th:href="@{/back-manager}">[ 个人中心 ]</a>
                     <a href="#">[ 退出登录 ]</a>
                 </li>
-                <li><a href="./action.html#register">注册</a></li>
-                <li><a href="./action.html#login">登录</a></li>
-                <li><a href="./index.html">首页</a></li>
+                <li><a th:href="@{/action#register}">注册</a></li>
+                <li><a th:href="@{/action#login}">登录</a></li>
+                <li><a th:href="@{/index}">首页</a></li>
                 <li>
                     商户推广
                     <i class="iconfont icon-arrow-down"></i>
                     <ul class="down-list-box">
                         <!-- 通过锚点快速定位 -->
-                        <li><a href="./vip.html#level1">VIP-体验版</a></li>
-                        <li><a href="./vip.html#level2">VIP-初级版</a></li>
-                        <li><a href="./vip.html#level3">VIP-中级版</a></li>
-                        <li><a href="./vip.html#level4">VIP-高级版</a></li>
+                        <li><a th:href="@{/vip#level1}">VIP-体验版</a></li>
+                        <li><a th:href="@{/vip#level2}">VIP-初级版</a></li>
+                        <li><a th:href="@{/vip#level3}">VIP-中级版</a></li>
+                        <li><a th:href="@{/vip#level4}">VIP-高级版</a></li>
                     </ul>
                 </li>
                 <li><a target="_black" href="https://www.itany.com">联系客服</a></li>
@@ -45,7 +45,7 @@
     <div class="service-topbar">
         <div class="main-box">
             <div class="logo">
-                <img src="./assets/img/logo-c.png" alt="" srcset="">
+                <img src="" th:src="@{/assets/img/logo-c.png}" alt="" srcset="">
             </div>
             <div class="search">
                 <div class="input-bar">
@@ -80,13 +80,13 @@
                         <div class="swiper" id="navBodyTopLoop">
                             <div class="swiper-wrapper">
                                 <div class="swiper-slide">
-                                    <img src="./assets/img/index/loop03.jpg" alt="" srcset="">
+                                    <img src="" th:src="@{/assets/img/index/loop03.jpg}" alt="" srcset="">
                                 </div>
                                 <div class="swiper-slide">
-                                    <img src="./assets/img/index/loop02.jpg" alt="" srcset="">
+                                    <img src="" th:src="@{/assets/img/index/loop02.jpg}" alt="" srcset="">
                                 </div>
                                 <div class="swiper-slide">
-                                    <img src="./assets/img/index/loop01.jpg" alt="" srcset="">
+                                    <img src="" th:src="@{/assets/img/index/loop01.jpg}" alt="" srcset="">
                                 </div>
                             </div>
                             <!-- 如果需要分页器 -->
@@ -112,7 +112,7 @@
 
     <footer class="footer-bar">
         <div class="main-box">
-            <img src="./assets/img/logo.png" alt="" srcset="">
+            <img src="" th:src="@{/assets/img/logo.png}" alt="" srcset="">
             <div>
                 <p>夫子庙校区：南京市秦淮区龙蟠中路458号通济产业园北区2栋1层</p>
                 <p>Copyright (C) 2002-2019 itany.com 南京市网博优壹职业培训学校 苏ICP备 苏ICP备1606</p>
@@ -126,13 +126,13 @@
     </footer>
     
     <!-- 轮播图插件 -->
-    <script src="./assets/swiper/swiper-bundle.min.js"></script>
+    <script th:src="@{/assets/swiper/swiper-bundle.min.js}"></script>
     <!-- 弹出插件 -->
-    <script src="./assets/plugins/coco-modal.js"></script>
+    <script th:src="@{/assets/plugins/coco-modal.js}"></script>
     <!-- 页面基础共享JS加载 -->
-    <script src="./assets/js/base.js"></script>
+    <script th:src="@{/assets/js/base.js}"></script>
     <!-- 当前页面独享JS加载 -->
-    <script src="./assets/js/pages/index.js"></script>
+    <script th:src="@{/assets/js/pages/index.js}"></script>
 </body>
 
 </html>

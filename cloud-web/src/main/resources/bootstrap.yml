@@ -25,6 +25,9 @@ spring:
       force:   true
     thymeleaf:
       cache: false
+  devtools:
+    restart:
+      additional-paths: resources/**,static/**,template/**
 
 feign:
   client:

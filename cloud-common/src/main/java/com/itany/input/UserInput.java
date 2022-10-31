@@ -1,9 +1,11 @@
 package com.itany.input;
 
+import com.itany.validation.Insert;
 import com.itany.validation.UpdateFlag;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -25,6 +27,12 @@ public class UserInput extends BaseInput implements Serializable {
     private String name;
 
     private String nickname;
+
+    private String password;
+
+    private String rePassword;
+
+    private String checkCode;
 
     private String phone;
 

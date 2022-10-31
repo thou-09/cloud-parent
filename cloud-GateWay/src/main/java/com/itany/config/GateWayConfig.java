@@ -9,11 +9,11 @@ import org.springframework.context.annotation.Configuration;
 public class GateWayConfig {
 
     @Bean
-   public RouteLocator routeLocator(RouteLocatorBuilder routeLocatorBuilder){
-        RouteLocatorBuilder.Builder routs =   routeLocatorBuilder.routes();
+    public RouteLocator routeLocator(RouteLocatorBuilder routeLocatorBuilder) {
+        RouteLocatorBuilder.Builder routs = routeLocatorBuilder.routes();
         routs.route("path_clouduser",
-                p->p.path("/test/**")
+                p -> p.path("/test/**")
                         .uri("http://localhost:9002")).build();
-        return  routs.build();
-   }
+        return routs.build();
+    }
 }
