@@ -110,7 +110,7 @@ coco.init();
 //     done()
 // });
 
-function openBuyModel(title,price) {
+function openBuyModel(title, price, level) {
     coco({
         width: '400px', // 宽度
         title: '开通VIP',
@@ -120,14 +120,16 @@ function openBuyModel(title,price) {
         destroy:true, // 因为每次打开都需更新数据，所以通过销毁重置
         hooks:{
             open(opt){
-                console.log("弹出内元素类容:",opt.bodyEl);
+                // console.log("弹出内元素类容:",opt.bodyEl);
                 opt.bodyEl.querySelector("#buyBox").style.display = null; // 重置
 
                 let titleDom = opt.bodyEl.querySelector(".title .type");
                 let priceDom = opt.bodyEl.querySelector(".price");
+                let qrcodeDom = opt.bodyEl.querySelector(".qrCode");
 
                 titleDom.innerHTML = title;
                 priceDom.innerHTML = "￥"+price;
+                qrcodeDom.src = "http://localhost:9001/pay/qrCode/" + level;
             }
         }
     });

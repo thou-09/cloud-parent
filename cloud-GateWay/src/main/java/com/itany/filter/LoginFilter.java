@@ -23,16 +23,14 @@ import java.util.Map;
 @Component
 public class LoginFilter implements GlobalFilter, Ordered {
 
-    private static final String AUTHORIZE_TOKEN = "AUTHORIZE_TOKEN";
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         MultiValueMap<String, HttpCookie> cks = exchange.getRequest().getCookies();
         List<HttpCookie> list= cks.get("TT_TOKEN");
         HttpCookie ck = list != null && list.size() > 0 ? list.get(0) : null;
         if(ck == null){
-            Map<String,Object> msg = new HashMap<>();
-            msg.put("status",-1);
+            Map<String,Object> msg = new HashMap<>(4);
+            msg.put("status", -1);
             msg.put("msg","请求失败,请先登录后再操作!!!");
             byte[] bits = JSON.toJSONString(msg).getBytes(StandardCharsets.UTF_8);
             DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(bits);

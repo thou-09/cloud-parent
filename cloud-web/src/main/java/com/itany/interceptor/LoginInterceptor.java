@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 
+/**
+ * LoginInterceptor.
+ *
+ * @author Thou
+ * @date 2022/11/2
+ */
 public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
@@ -35,6 +41,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                             if (!user.getId().equals(loginUser.getId())) {
                                 flag = false;
                             } else {
+                                request.setAttribute("loginUser", loginUser);
                                 flag = true;
                             }
                         }

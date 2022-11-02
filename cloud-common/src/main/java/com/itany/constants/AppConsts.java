@@ -119,4 +119,32 @@ public interface AppConsts {
      * 关联服务表
      */
     Integer ANNEX_TABLETYPE_SERVER = 3;
+
+    // 支付相关
+    /**
+     * VIP NO
+     */
+    Integer[] VIP_NO = {
+            1, 2, 3, 4
+    };
+    /**
+     * VIP 价格
+     */
+    String[] VIP_PRICE = {
+            "10", "50", "100", "200"
+    };
+    /**
+     * VIP 天数
+     */
+    Integer[] VIP_DAY = {
+            3, 30, 180, 365
+    };
+    /**
+     * 未支付状态
+     */
+    Integer ORDER_UNPAID = 0;
+    /**
+     * 支付状态
+     */
+    Integer ORDER_PAID = 1;
 }

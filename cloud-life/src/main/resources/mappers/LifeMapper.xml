@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.itany.dao.LifeDao">
+
+    <insert id="insertMemberCompany">
+        insert into t_member_commpany
+            (memberid, commpanyid, startdate, enddate, flag, no)
+        values
+            (#{memberid}, #{commpanyid}, #{startdate}, #{enddate}, #{flag}, #{no});
+    </insert>
+
+    <update id="updateMemberCompanyFlag">
+        update t_member_commpany
+        set flag = #{flag}
+        where no = #{no}
+    </update>
+
+    <select id="getMemberCompanyByNo" resultType="com.itany.dto.MemberCompanyDTO">
+        select *
+        from t_member_commpany
+        where no = #{no}
+    </select>
+
+    <select id="getLatest" resultType="com.itany.dto.MemberCompanyDTO">
+        select *
+        from t_member_commpany
+        where flag = 1
+                order by enddate desc
+        limit 1
+    </select>
+</mapper>

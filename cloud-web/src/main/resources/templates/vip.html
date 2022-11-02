@@ -1,13 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="https://www.thymeleaf.org/">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>vip服务</title>
-    <link rel="stylesheet" href="./assets/css/base.css">
-    <link rel="stylesheet" href="./assets/font/iconfont.css">
+    <link rel="stylesheet" th:href="@{/assets/css/base.css}">
+    <link rel="stylesheet" th:href="@{/assets/font/iconfont.css}">
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <script>
+        let userid = '[[${session.loginUser.id}]]';
+        let websocket = new WebSocket("ws://localhost:9001/websocket/" + userid);
+        websocket.onmessage = (event) => {
+            if (event.data === 'paysuccess') {
+                alert('支付成功');
+                window.location.reload();
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -17,21 +28,21 @@
             <ul class="btns">
                 <li class="user-info">
                     <span>张三</span>
-                    <a href="./back-manager.html">[ 个人中心 ]</a>
+                    <a th:href="@{/back-manager}">[ 个人中心 ]</a>
                     <a href="#">[ 退出登录 ]</a>
                 </li>
-                <li><a href="./action.html#register">注册</a></li>
-                <li><a href="./action.html#login">登录</a></li>
-                <li><a href="./index.html">首页</a></li>
+                <li><a th:href="@{/action#register}">注册</a></li>
+                <li><a th:href="@{/action#login}">登录</a></li>
+                <li><a th:href="@{/index}">首页</a></li>
                 <li>
                     商户推广
                     <i class="iconfont icon-arrow-down"></i>
                     <ul class="down-list-box">
                         <!-- 通过锚点快速定位 -->
-                        <li><a href="./vip.html#level1">VIP-体验版</a></li>
-                        <li><a href="./vip.html#level2">VIP-初级版</a></li>
-                        <li><a href="./vip.html#level3">VIP-中级版</a></li>
-                        <li><a href="./vip.html#level4">VIP-高级版</a></li>
+                        <li><a th:href="@{/vip#level1}">VIP-体验版</a></li>
+                        <li><a th:href="@{/vip#level2}">VIP-初级版</a></li>
+                        <li><a th:href="@{/vip#level3}">VIP-中级版</a></li>
+                        <li><a th:href="@{/vip#level4}">VIP-高级版</a></li>
                     </ul>
                 </li>
                 <li><a target="_black" href="https://www.itany.com">联系客服</a></li>
@@ -41,7 +52,7 @@
     </header>
     <main class="vip-box">
         <section class="banner-box">
-            <img src="./assets/img/vip/top.png" alt="">
+            <img src="" th:src="@{/assets/img/vip/top.png}" alt="">
         </section>
         <section class="main-box tip-box">
             <div class="tip-title">为什么要做VIP?</div>
@@ -54,7 +65,7 @@
                     <div class="tip-desc">
                         <div>
                             <div class="icon1">
-                                <img src="./assets/img/vip/01.png" alt="" srcset="">
+                                <img src="" th:src="@{/assets/img/vip/01.png}" alt="" srcset="">
                             </div>
                             <div class="info">
                                 <span class="c1">快</span>
@@ -72,7 +83,7 @@
                     <div class="tip-desc">
                         <div>
                             <div class="icon2">
-                                <img src="./assets/img/vip/02.png" alt="" srcset="">
+                                <img src="" th:src="@{/assets/img/vip/02.png}" alt="" srcset="">
                             </div>
                             <div class="info">
                                 <span class="c2">准</span>
@@ -90,7 +101,7 @@
                     <div class="tip-desc">
                         <div>
                             <div class="icon3">
-                                <img src="./assets/img/vip/03.png" alt="" srcset="">
+                                <img src="" th:src="@{/assets/img/vip/03.png}" alt="" srcset="">
                             </div>
                             <div class="info">
                                 <span class="c3">稳</span>
@@ -108,7 +119,7 @@
                     <div class="tip-desc">
                         <div>
                             <div class="icon4">
-                                <img src="./assets/img/vip/04.png" alt="" srcset="">
+                                <img src="" th:src="@{/assets/img/vip/04.png}" alt="" srcset="">
                             </div>
                             <div class="info">
                                 <span class="c4">省</span>
@@ -127,7 +138,7 @@
                 <div id="level1" class="vip-desc">
                     <div>
                         <div class="vip-icon icon1">
-                            <img src="./assets/img/vip/vip-1.png" alt="">
+                            <img src="" th:src="@{/assets/img/vip/vip-1.png}" alt="">
                             <p>VIP-体验会员</p>
                         </div>
                         <dl class="vip-info">
@@ -135,14 +146,14 @@
                             <dd>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-5.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-5.png}" alt="">
                                         <p>发帖通</p>
                                     </div>
                                     <div>通过工具提升内容质量和工作效率。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-6.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-6.png}" alt="">
                                         <p>收录优化</p>
                                     </div>
                                     <div>最快3天上首页，排名稳定，排名结果可查。</div>
@@ -151,7 +162,7 @@
                             <dt>会员价格</dt>
                             <dd class="vip-price">
                                 <span>10元 / 3天</span>
-                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('体验会员',10)">
+                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('体验会员', 10, 0)">
                             </dd>
                         </dl>
                     </div>
@@ -159,7 +170,7 @@
                 <div id="level2" class="vip-desc">
                     <div>
                         <div class="vip-icon icon2">
-                            <img src="./assets/img/vip/vip-2.png" alt="">
+                            <img src="" th:src="@{/assets/img/vip/vip-2.png}" alt="">
                             <p>VIP-初级会员</p>
                         </div>
                         <dl class="vip-info">
@@ -167,21 +178,21 @@
                             <dd>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-4.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-4.png}" alt="">
                                         <p>超级刷新</p>
                                     </div>
                                     <div>千元套餐万次刷新，单次刷新低至3折；免费刷新、循环刷新、预约刷新多种推广方式任意选。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-5.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-5.png}" alt="">
                                         <p>发帖通</p>
                                     </div>
                                     <div>通过工具提升内容质量和工作效率。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-6.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-6.png}" alt="">
                                         <p>收录优化</p>
                                     </div>
                                     <div>最快3天上首页，排名稳定，排名结果可查。</div>
@@ -190,7 +201,7 @@
                             <dt>会员价格</dt>
                             <dd class="vip-price">
                                 <span>50元 / 30天</span>
-                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('初级会员',50)">
+                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('初级会员', 50, 1)">
                             </dd>
                         </dl>
                     </div>
@@ -198,7 +209,7 @@
                 <div id="level3" class="vip-desc">
                     <div>
                         <div class="vip-icon icon3">
-                            <img src="./assets/img/vip/vip-3.png" alt="">
+                            <img src="" th:src="@{/assets/img/vip/vip-3.png}" alt="">
                             <p>VIP-中级会员</p>
                         </div>
                         <dl class="vip-info">
@@ -206,28 +217,28 @@
                             <dd>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-3.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-3.png}" alt="">
                                         <p>黄金展位</p>
                                     </div>
                                     <div>黄金推广位日均超万次浏览量，VIP独享，为您提供最优质的曝光效果。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-4.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-4.png}" alt="">
                                         <p>超级刷新</p>
                                     </div>
                                     <div>千元套餐万次刷新，单次刷新低至3折；免费刷新、循环刷新、预约刷新多种推广方式任意选。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-5.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-5.png}" alt="">
                                         <p>发帖通</p>
                                     </div>
                                     <div>通过工具提升内容质量和工作效率。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-6.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-6.png}" alt="">
                                         <p>收录优化</p>
                                     </div>
                                     <div>最快3天上首页，排名稳定，排名结果可查。</div>
@@ -236,7 +247,7 @@
                             <dt>会员价格</dt>
                             <dd class="vip-price">
                                 <span>100元 / 180天</span>
-                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('中级会员',100)">
+                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('中级会员', 100, 2)">
                             </dd>
                         </dl>
                     </div>
@@ -244,7 +255,7 @@
                 <div id="level4" class="vip-desc">
                     <div>
                         <div class="vip-icon icon4">
-                            <img src="./assets/img/vip/vip-4.png" alt="">
+                            <img src="" th:src="@{/assets/img/vip/vip-4.png}" alt="">
                             <p>VIP-高级会员</p>
                         </div>
                         <dl class="vip-info">
@@ -252,42 +263,42 @@
                             <dd>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-1.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-1.png}" alt="">
                                         <p>精品官网</p>
                                     </div>
                                     <div>电脑端专属域名，高端大气上档次；移动端专业大气，海量客户一触即达。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-2.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-2.png}" alt="">
                                         <p>钻石店铺</p>
                                     </div>
                                     <div>具备SEO优化功能落地页，提供AI优选词、AI内容发布。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-3.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-3.png}" alt="">
                                         <p>黄金展位</p>
                                     </div>
                                     <div>黄金推广位日均超万次浏览量，VIP独享，为您提供最优质的曝光效果。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-4.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-4.png}" alt="">
                                         <p>超级刷新</p>
                                     </div>
                                     <div>千元套餐万次刷新，单次刷新低至3折；免费刷新、循环刷新、预约刷新多种推广方式任意选。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-5.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-5.png}" alt="">
                                         <p>发帖通</p>
                                     </div>
                                     <div>通过工具提升内容质量和工作效率。</div>
                                 </div>
                                 <div class="vip-power">
                                     <div>
-                                        <img src="./assets/img/vip/vip-icon-6.png" alt="">
+                                        <img src="" th:src="@{/assets/img/vip/vip-icon-6.png}" alt="">
                                         <p>收录优化</p>
                                     </div>
                                     <div>最快3天上首页，排名稳定，排名结果可查。</div>
@@ -296,7 +307,7 @@
                             <dt>会员价格</dt>
                             <dd class="vip-price">
                                 <span>200元 / 1年</span>
-                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('高级会员',200)">
+                                <input class="btn" type="button" value="立即购买" onclick="openBuyModel('高级会员', 200, 3)">
                             </dd>
                         </dl>
                     </div>
@@ -307,7 +318,7 @@
 
     <footer class="footer-bar">
         <div class="main-box">
-            <img src="./assets/img/logo.png" alt="" srcset="">
+            <img src="" th:src="@{/assets/img/logo.png}" alt="" srcset="">
             <div>
                 <p>夫子庙校区：南京市秦淮区龙蟠中路458号通济产业园北区2栋1层</p>
                 <p>Copyright (C) 2002-2019 itany.com 南京市网博优壹职业培训学校 苏ICP备 苏ICP备1606</p>
@@ -326,17 +337,17 @@
             <span class="type"></span>
             <span>扫码支付</span>
         </div>
-        <img src="./assets/img/vip/buy.png" alt="" srcset="">
+        <img class="qrCode" src="" alt="" srcset="">
         <div class="price"></div>
     </div>
     <!-- end -->
 
     <!-- 弹出插件 -->
-    <script src="./assets/plugins/coco-modal.js"></script>
+    <script th:src="@{/assets/plugins/coco-modal.js}"></script>
     <!-- 页面基础共享JS加载 -->
-    <script src="./assets/js/base.js"></script>
+    <script th:src="@{/assets/js/base.js}"></script>
     <!-- 当前页面独享JS加载 -->
-    <script src="./assets/js/pages/vip.js"></script>
+    <script th:src="@{/assets/js/pages/vip.js}"></script>
 </body>
 
 </html>

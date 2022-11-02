@@ -66,7 +66,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(new LoginInterceptor())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/index", "/action")
-                .excludePathPatterns("/sso/login", "/web/user/register")
+                .excludePathPatterns("/sso/login", "/web/user/register", "/pay/callback/**", "/ws/**")
                 .excludePathPatterns("/**/*.html", "/**/*.css", "/**/*.js")
                 .excludePathPatterns("/**/*.json", "/**/*.ttf", "/**/*.woff", "/**/*.woff2")
                 .excludePathPatterns("/**/*.png", "/**/*.gif", "/**/*.jpg", "/**/*.webp", "/**/*.ico");
